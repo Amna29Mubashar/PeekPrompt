@@ -17,6 +17,25 @@ jobs:
             -localizationPath exported \
             -exportLanguage en \
             CODE_SIGNING_ALLOWED=NO
+      - name: Print strings
+        run: |
+          python3 - <<'PY'
+          import glob, json, xml.etree.ElementTree as ET
+          ns = {"x": "urn:oasis:names:tc:xliff:document:1.2"}
+          out = []
+          for path in glob.glob("exported/**/*.xliff", recursive=True):
+              root = ET.parse(path).getroot()
+              for f in root.findall("x:file", ns):
+                  orig = f.get("original")
+                  for unit in f.iter("{urn:oasis:names:tc:xliff:document:1.2}trans-unit"):
+                      src = unit.find("x:source", ns)
+                      note = unit.find("x:note", ns)
+                      out.append({"file": orig, "id": unit.get("id"), "source": src.text if src is not None else "",
+                                  "note": note.text if note is not None else ""})
+          print("STRINGS_JSON_BEGIN")
+          print(json.dumps(out, ensure_ascii=False))
+          print("STRINGS_JSON_END")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: strings
