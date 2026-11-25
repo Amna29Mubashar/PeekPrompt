@@ -202,6 +202,14 @@ xcodegen generate
 
 OpenDyslexic is bundled under the SIL Open Font License (see `PeekPrompt/Fonts/OpenDyslexic-OFL.txt`).
 
+## Website, privacy and support
+
+- Website: https://amna29mubashar.github.io/PeekPrompt/
+- [Privacy Policy](https://amna29mubashar.github.io/PeekPrompt/privacy.html): PeekPrompt collects no data.
+- [Support](https://amna29mubashar.github.io/PeekPrompt/support.html)
+
+PeekPrompt is made by Amna Mubashar and published on the Mac App Store by UV Apps.
+
 ## Credits
 
 Inspired by [NotchPrompter](https://github.com/jpomykala/NotchPrompter) by Jakub Pomykała and [Textream](https://github.com/f/textream) by Fatih Kadir Akın. Both are MIT licensed. PeekPrompt is an independent implementation.
