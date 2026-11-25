@@ -213,6 +213,7 @@ private struct AppearanceTab: View {
             Section("Text") {
                 LabeledSlider(title: "Font size", value: $settings.fontSize, range: 10...36, unit: "pt")
                 LabeledSlider(title: "Line spacing", value: $settings.lineSpacing, range: 0...16, unit: "pt")
+                Toggle("Highlight the line you're reading", isOn: $settings.highlightReadingLine)
             }
 
             Section("Size") {

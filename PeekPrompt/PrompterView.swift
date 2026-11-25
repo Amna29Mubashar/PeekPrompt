@@ -162,7 +162,7 @@ struct ScriptViewport: View {
                 }
             }
             .clipped()
-            .mask(fadeMask)
+            .mask(readingMask(height: geo.size.height))
             .onPreferenceChange(ContentHeightKey.self) { height in
                 engine.contentHeight = height
             }
@@ -172,15 +172,41 @@ struct ScriptViewport: View {
         }
     }
 
-    /// Fades the text in at the top and out at the bottom.
-    private var fadeMask: some View {
-        LinearGradient(
+    /// Fades the text in at the top and out at the bottom. With the reading-line
+    /// highlight on, the line you're reading is full brightness and the rest is dimmed.
+    private func readingMask(height: CGFloat) -> some View {
+        guard settings.highlightReadingLine, height > 0 else {
+            return LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0),
+                    .init(color: .black, location: 0.18),
+                    .init(color: .black, location: 0.78),
+                    .init(color: .clear, location: 1)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        }
+
+        // One line of text, as a fraction of the visible height.
+        let lineHeight = CGFloat(settings.fontSize) * 1.3 + CGFloat(settings.lineSpacing)
+        let band = min(lineHeight / height, 0.3)
+        let top = readingLine
+        let bottom = min(readingLine + band * 1.1, 0.9)
+        let soft = band * 0.6
+        let dim = Color.black.opacity(0.35)
+
+        return LinearGradient(
             stops: [
                 .init(color: .clear, location: 0),
-                .init(color: .black, location: 0.18),
-                .init(color: .black, location: 0.78),
+                .init(color: dim, location: max(0.05, top - soft - 0.08)),
+                .init(color: dim, location: max(0.06, top - soft)),
+                .init(color: .black, location: top),
+                .init(color: .black, location: bottom),
+                .init(color: dim, location: min(0.94, bottom + soft)),
+                .init(color: dim, location: 0.9),
                 .init(color: .clear, location: 1)
-            ],
+            ].sorted { $0.location < $1.location },
             startPoint: .top,
             endPoint: .bottom
         )
