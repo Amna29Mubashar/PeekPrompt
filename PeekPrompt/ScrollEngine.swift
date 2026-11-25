@@ -14,6 +14,8 @@ final class ScrollEngine: ObservableObject {
     /// True on frames where the text is actually moving.
     @Published private(set) var isAdvancing = false
     @Published var isHovering = false
+    /// Time spent presenting since the last restart (excludes the countdown).
+    @Published private(set) var elapsed: TimeInterval = 0
     /// Seconds left in the 3-2-1 countdown, or nil when not counting down.
     @Published private(set) var countdown: Int?
 
@@ -43,7 +45,7 @@ final class ScrollEngine: ObservableObject {
     // MARK: Controls
 
     func play() {
-        if isFinished { offset = 0 }
+        if isFinished { offset = 0; elapsed = 0 }
         isRunning = true
         if settings.mode == .voiceActivated { mic.start() }
 
@@ -92,6 +94,7 @@ final class ScrollEngine: ObservableObject {
 
     func restart() {
         offset = 0
+        elapsed = 0
         if isRunning { lastFrameTime = CACurrentMediaTime() }
     }
 
@@ -102,6 +105,16 @@ final class ScrollEngine: ObservableObject {
 
     func changeSpeed(by delta: Double) {
         settings.speed = min(max(settings.speed + delta, 5), 150)
+    }
+
+    // MARK: Pacing
+
+    /// How far ahead (+) or behind (−) schedule you are, in seconds. nil without a target.
+    var paceDelta: TimeInterval? {
+        let target = settings.targetMinutes * 60
+        guard target > 0, elapsed > 2 else { return nil }
+        // Where you'd be if you were exactly on time vs. where you are.
+        return (progress * target) - elapsed
     }
 
     // MARK: Frame loop
@@ -126,6 +139,7 @@ final class ScrollEngine: ObservableObject {
         // Cap the step so a hiccup (e.g. the Mac waking up) can't jump the text.
         let deltaTime = min(now - lastFrameTime, 0.1)
         lastFrameTime = now
+        elapsed += deltaTime
 
         let hoverPaused = isHovering && settings.pauseOnHover
         let shouldMove: Bool

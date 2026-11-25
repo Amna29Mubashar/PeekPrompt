@@ -164,6 +164,12 @@ private struct ScrollingTab: View {
                     Image(systemName: "hare")
                 }
                 Toggle("Pause while the pointer is over the prompter", isOn: $settings.pauseOnHover)
+                Picker("Target length (pacing timer)", selection: $settings.targetMinutes) {
+                    Text("No target").tag(0.0)
+                    ForEach([0.5, 1, 2, 3, 5, 10, 15, 20, 30], id: \.self) { minutes in
+                        Text(minutes < 1 ? "30 seconds" : "\(Int(minutes)) min").tag(minutes)
+                    }
+                }
                 Picker("Countdown before starting", selection: $settings.countdownSeconds) {
                     Text("Off").tag(0)
                     Text("3 seconds").tag(3)

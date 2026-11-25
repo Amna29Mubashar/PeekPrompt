@@ -108,10 +108,7 @@ struct PrompterView: View {
                     .frame(width: 6, height: 6)
                 Spacer()
                 if settings.showProgress {
-                    Text("\(Int(engine.progress * 100))%")
-                        .font(.system(size: 9, weight: .medium, design: .rounded))
-                        .foregroundStyle(settings.theme.text.opacity(0.5))
-                        .monospacedDigit()
+                    PaceLabel(engine: engine, settings: settings)
                 }
             }
         }
@@ -319,5 +316,54 @@ struct HoverControls: View {
         .buttonStyle(.plain)
         .foregroundStyle(tint)
         .help(help)
+    }
+}
+
+// MARK: - Pacing
+
+/// "0:42 / 2:00 · +5s" in the right ear. Green = on time, orange = behind, blue = ahead.
+struct PaceLabel: View {
+    @ObservedObject var engine: ScrollEngine
+    @ObservedObject var settings: PrompterSettings
+
+    var body: some View {
+        HStack(spacing: 4) {
+            if engine.elapsed > 0 || settings.targetMinutes > 0 {
+                Text(timeText)
+            }
+            if let delta = engine.paceDelta {
+                Text(deltaText(delta))
+                    .foregroundStyle(color(for: delta))
+            } else if engine.elapsed == 0 {
+                Text("\(Int(engine.progress * 100))%")
+            }
+        }
+        .font(.system(size: 9, weight: .semibold, design: .rounded))
+        .foregroundStyle(settings.theme.text.opacity(0.55))
+        .monospacedDigit()
+        .lineLimit(1)
+    }
+
+    private var timeText: String {
+        let elapsed = format(engine.elapsed)
+        guard settings.targetMinutes > 0 else { return elapsed }
+        return "\(elapsed) / \(format(settings.targetMinutes * 60))"
+    }
+
+    private func deltaText(_ delta: TimeInterval) -> String {
+        if abs(delta) < 5 { return "on time" }
+        let seconds = Int(abs(delta).rounded())
+        let amount = seconds >= 60 ? format(TimeInterval(seconds)) : "\(seconds)s"
+        return delta > 0 ? "\(amount) ahead" : "\(amount) behind"
+    }
+
+    private func color(for delta: TimeInterval) -> Color {
+        if abs(delta) < 5 { return .green }
+        return delta > 0 ? .cyan : .orange
+    }
+
+    private func format(_ time: TimeInterval) -> String {
+        let total = Int(time)
+        return String(format: "%d:%02d", total / 60, total % 60)
     }
 }
