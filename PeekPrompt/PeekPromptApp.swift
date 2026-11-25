@@ -82,6 +82,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotKeys.register(keyCode: UInt32(kVK_ANSI_M), modifiers: mods) { MicrophoneMonitor.shared.isMuted.toggle() }
         hotKeys.register(keyCode: UInt32(kVK_UpArrow), modifiers: mods) { ScrollEngine.shared.changeSpeed(by: 5) }
         hotKeys.register(keyCode: UInt32(kVK_DownArrow), modifiers: mods) { ScrollEngine.shared.changeSpeed(by: -5) }
+        // Hands-free start: Shift-Command-Space shows the prompter and starts / pauses it.
+        hotKeys.register(keyCode: UInt32(kVK_Space), modifiers: UInt32(cmdKey | shiftKey)) {
+            PrompterSettings.shared.isPrompterVisible = true
+            ScrollEngine.shared.toggle()
+        }
         hotKeys.register(keyCode: UInt32(kVK_RightArrow), modifiers: mods) { ScrollEngine.shared.nextSegment() }
         hotKeys.register(keyCode: UInt32(kVK_LeftArrow), modifiers: mods) { ScrollEngine.shared.previousSegment() }
     }

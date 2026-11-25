@@ -546,12 +546,19 @@ private struct PrivacyTab: View {
 
             Section("Keyboard shortcuts (work in any app)") {
                 Toggle("Enable global shortcuts", isOn: $settings.globalShortcuts)
+                ShortcutRow(keys: "⇧⌘Space", action: "Start / pause (hands-free start)")
                 ShortcutRow(keys: "⌃⌥P", action: "Play / pause")
                 ShortcutRow(keys: "⌃⌥H", action: "Show / hide prompter")
                 ShortcutRow(keys: "⌃⌥R", action: "Restart from top")
                 ShortcutRow(keys: "⌃⌥M", action: "Mute / unmute microphone")
                 ShortcutRow(keys: "⌃⌥↑ / ↓", action: "Faster / slower")
                 ShortcutRow(keys: "⌃⌥→ / ←", action: "Next / previous slide or chunk")
+            }
+
+            Section("Siri & Shortcuts") {
+                Text("Say \u{201C}Hey Siri, start PeekPrompt\u{201D}, \u{201C}Pause PeekPrompt\u{201D} or \u{201C}Next slide in PeekPrompt\u{201D}. The same actions are in the Shortcuts app, so you can add them to your own automations.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section {
