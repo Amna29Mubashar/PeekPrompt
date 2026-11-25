@@ -89,6 +89,8 @@ struct Script: Identifiable, Codable, Equatable {
     var id = UUID()
     var title: String
     var body: String
+    /// Folder name, or nil for scripts not in a folder.
+    var folder: String?
 }
 
 /// Every user setting, saved automatically to UserDefaults.
@@ -101,6 +103,7 @@ final class PrompterSettings: ObservableObject {
         static let script = "script"
         static let scripts = "scripts"
         static let currentScriptID = "currentScriptID"
+        static let folderNames = "folderNames"
         static let mode = "mode"
         static let speed = "speed"
         static let fontSize = "fontSize"
@@ -131,6 +134,8 @@ final class PrompterSettings: ObservableObject {
     // MARK: Script library
     /// All saved scripts.
     @Published var scripts: [Script] { didSet { saveScripts() } }
+    /// Folders in display order (a folder can exist with no scripts in it yet).
+    @Published var folderNames: [String] { didSet { defaults.set(folderNames, forKey: Key.folderNames) } }
     @Published var currentScriptID: UUID { didSet { defaults.set(currentScriptID.uuidString, forKey: Key.currentScriptID) } }
     /// Text of the script on screen. Editing it updates the matching library entry.
     @Published var script: String {
@@ -153,23 +158,76 @@ final class PrompterSettings: ObservableObject {
     }
 
     @discardableResult
-    func addScript(title: String = "Untitled Script", body: String = "") -> UUID {
-        let new = Script(title: title, body: body)
+    func addScript(title: String = "Untitled Script", body: String = "", folder: String? = nil) -> UUID {
+        let new = Script(title: title, body: body, folder: folder)
         scripts.append(new)
         selectScript(new.id)
         return new.id
     }
 
+    /// Scripts in the order they appear in the library: each folder in turn, then unfiled ones.
+    /// This is also the play queue for "Play the next script".
+    var orderedScripts: [Script] {
+        folderNames.flatMap { name in scripts.filter { $0.folder == name } }
+            + scripts.filter { $0.folder == nil || !folderNames.contains($0.folder!) }
+    }
+
+    func scripts(inFolder folder: String?) -> [Script] {
+        if let folder { return scripts.filter { $0.folder == folder } }
+        return scripts.filter { $0.folder == nil || !folderNames.contains($0.folder!) }
+    }
+
     /// The script after the current one in the library, or nil at the end.
     var nextScriptID: UUID? {
-        guard let index = scripts.firstIndex(where: { $0.id == currentScriptID }),
-              index + 1 < scripts.count else { return nil }
-        return scripts[index + 1].id
+        let ordered = orderedScripts
+        guard let index = ordered.firstIndex(where: { $0.id == currentScriptID }),
+              index + 1 < ordered.count else { return nil }
+        return ordered[index + 1].id
+    }
+
+    // MARK: Ordering & folders
+
+    /// Reorders scripts within one folder (or the unfiled group) after a drag.
+    func moveScripts(inFolder folder: String?, from source: IndexSet, to destination: Int) {
+        var group = scripts(inFolder: folder)
+        group.move(fromOffsets: source, toOffset: destination)
+        let groupIDs = Set(group.map(\.id))
+        var iterator = group.makeIterator()
+        scripts = scripts.map { groupIDs.contains($0.id) ? (iterator.next() ?? $0) : $0 }
+    }
+
+    func setFolder(_ folder: String?, for id: UUID) {
+        guard let index = scripts.firstIndex(where: { $0.id == id }) else { return }
+        scripts[index].folder = folder
+    }
+
+    func createFolder(named rawName: String) {
+        let name = rawName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, !folderNames.contains(name) else { return }
+        folderNames.append(name)
+    }
+
+    func renameFolder(_ old: String, to rawName: String) {
+        let name = rawName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty, !folderNames.contains(name),
+              let index = folderNames.firstIndex(of: old) else { return }
+        folderNames[index] = name
+        scripts = scripts.map { var s = $0; if s.folder == old { s.folder = name }; return s }
+    }
+
+    /// Deletes the folder only; its scripts move back to the main list.
+    func deleteFolder(_ name: String) {
+        folderNames.removeAll { $0 == name }
+        scripts = scripts.map { var s = $0; if s.folder == name { s.folder = nil }; return s }
+    }
+
+    func moveFolders(from source: IndexSet, to destination: Int) {
+        folderNames.move(fromOffsets: source, toOffset: destination)
     }
 
     func duplicateScript(_ id: UUID) {
         guard let original = scripts.first(where: { $0.id == id }) else { return }
-        addScript(title: original.title + " copy", body: original.body)
+        addScript(title: original.title + " copy", body: original.body, folder: original.folder)
     }
 
     func renameScript(_ id: UUID, to title: String) {
@@ -272,6 +330,7 @@ final class PrompterSettings: ObservableObject {
                              body: existing ?? PrompterSettings.sampleScript)]
         }
         scripts = loaded
+        folderNames = d.stringArray(forKey: Key.folderNames) ?? []
         let savedID = d.string(forKey: Key.currentScriptID).flatMap(UUID.init(uuidString:))
         let current = loaded.first(where: { $0.id == savedID }) ?? loaded[0]
         currentScriptID = current.id

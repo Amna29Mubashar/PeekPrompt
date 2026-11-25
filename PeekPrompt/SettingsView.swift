@@ -55,6 +55,11 @@ struct SettingsView: View {
 private struct ScriptTab: View {
     @ObservedObject var settings: PrompterSettings
 
+    @State private var newFolderName = ""
+    @State private var isNamingFolder = false
+    @State private var folderBeingRenamed: String?
+    @State private var renameText = ""
+
     var body: some View {
         HStack(spacing: 12) {
             // Library
@@ -63,23 +68,46 @@ private struct ScriptTab: View {
                     get: { settings.currentScriptID },
                     set: { if let id = $0 { settings.selectScript(id) } }
                 )) {
-                    ForEach(settings.scripts) { script in
-                        Text(script.title.isEmpty ? "Untitled" : script.title)
-                            .lineLimit(1)
-                            .tag(script.id)
-                            .contextMenu {
-                                Button("Duplicate") { settings.duplicateScript(script.id) }
-                                Button("Delete", role: .destructive) { settings.deleteScript(script.id) }
-                                    .disabled(settings.scripts.count < 2)
-                            }
+                    ForEach(settings.folderNames, id: \.self) { folder in
+                        Section {
+                            scriptRows(inFolder: folder)
+                        } header: {
+                            Label(folder, systemImage: "folder")
+                                .contextMenu {
+                                    Button("Rename Folder…") {
+                                        renameText = folder
+                                        folderBeingRenamed = folder
+                                    }
+                                    Button("New Script in Folder") { settings.addScript(folder: folder) }
+                                    Divider()
+                                    Button("Delete Folder (keeps scripts)", role: .destructive) {
+                                        settings.deleteFolder(folder)
+                                    }
+                                }
+                        }
+                    }
+
+                    Section(settings.folderNames.isEmpty ? "" : "Other Scripts") {
+                        scriptRows(inFolder: nil)
                     }
                 }
                 .listStyle(.sidebar)
 
                 Divider()
                 HStack(spacing: 2) {
-                    Button { settings.addScript() } label: { Image(systemName: "plus") }
-                        .help("New script")
+                    Menu {
+                        Button("New Script") { settings.addScript() }
+                        Button("New Folder…") {
+                            newFolderName = ""
+                            isNamingFolder = true
+                        }
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    .menuStyle(.borderlessButton)
+                    .fixedSize()
+                    .help("New script or folder")
+
                     Button { settings.deleteScript(settings.currentScriptID) } label: { Image(systemName: "minus") }
                         .help("Delete script")
                         .disabled(settings.scripts.count < 2)
@@ -91,14 +119,29 @@ private struct ScriptTab: View {
                     } label: {
                         Label("Import", systemImage: "square.and.arrow.down")
                     }
-                    .help("Import .txt, .md, .rtf, .docx, or PowerPoint speaker notes (.pptx)")
+                    .help("Import .txt, .md, .rtf, .docx, .pdf, or PowerPoint speaker notes (.pptx)")
                 }
                 .buttonStyle(.borderless)
                 .padding(6)
             }
-            .frame(width: 160)
+            .frame(width: 190)
             .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
+            .alert("New Folder", isPresented: $isNamingFolder) {
+                TextField("Folder name", text: $newFolderName)
+                Button("Create") { settings.createFolder(named: newFolderName) }
+                Button("Cancel", role: .cancel) {}
+            }
+            .alert("Rename Folder", isPresented: Binding(
+                get: { folderBeingRenamed != nil },
+                set: { if !$0 { folderBeingRenamed = nil } }
+            )) {
+                TextField("Folder name", text: $renameText)
+                Button("Rename") {
+                    if let old = folderBeingRenamed { settings.renameFolder(old, to: renameText) }
+                }
+                Button("Cancel", role: .cancel) {}
+            }
 
             // Editor
             VStack(alignment: .leading, spacing: 8) {
@@ -126,6 +169,32 @@ private struct ScriptTab: View {
             }
         }
         .padding()
+    }
+
+    /// Scripts in one folder (or unfiled), draggable to reorder.
+    @ViewBuilder
+    private func scriptRows(inFolder folder: String?) -> some View {
+        ForEach(settings.scripts(inFolder: folder)) { script in
+            Text(script.title.isEmpty ? "Untitled" : script.title)
+                .lineLimit(1)
+                .tag(script.id)
+                .contextMenu {
+                    Button("Duplicate") { settings.duplicateScript(script.id) }
+                    Menu("Move to Folder") {
+                        Button("None") { settings.setFolder(nil, for: script.id) }
+                        if !settings.folderNames.isEmpty { Divider() }
+                        ForEach(settings.folderNames, id: \.self) { name in
+                            Button(name) { settings.setFolder(name, for: script.id) }
+                        }
+                    }
+                    Divider()
+                    Button("Delete", role: .destructive) { settings.deleteScript(script.id) }
+                        .disabled(settings.scripts.count < 2)
+                }
+        }
+        .onMove { source, destination in
+            settings.moveScripts(inFolder: folder, from: source, to: destination)
+        }
     }
 
     /// Average speaking pace is roughly 150 words per minute.
