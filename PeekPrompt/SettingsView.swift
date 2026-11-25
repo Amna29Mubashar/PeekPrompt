@@ -493,7 +493,7 @@ private struct AppearanceTab: View {
                         Text(option.name).tag(option.choice)
                     }
                 }
-                Text("On a screen without a notch, the prompter hangs from the top center, right under where a webcam usually sits.")
+                Text("Choose whether the prompter stays on your MacBook, follows your mouse to an external monitor, or always uses one screen. On a screen without a notch, it hangs from the top center, right under where a webcam usually sits.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

@@ -68,7 +68,7 @@ enum EndAction: String, CaseIterable, Identifiable {
 }
 
 /// Which screen the prompter appears on.
-enum DisplayChoice: Equatable {
+enum DisplayChoice: Hashable {
     /// The MacBook's notch screen if there is one, otherwise the main screen.
     case automatic
     /// Whichever screen the mouse pointer is on.

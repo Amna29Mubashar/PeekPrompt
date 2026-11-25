@@ -362,8 +362,8 @@ struct DisplayOption {
 
     static var all: [DisplayOption] {
         var options = [
-            DisplayOption(choice: .automatic, name: String(localized: "Automatic (MacBook screen)")),
-            DisplayOption(choice: .followMouse, name: String(localized: "Follow the mouse pointer"))
+            DisplayOption(choice: .automatic, name: String(localized: "Stay on the MacBook screen")),
+            DisplayOption(choice: .followMouse, name: String(localized: "Move with my mouse to any screen"))
         ]
         for screen in NSScreen.screens {
             guard let id = screen.displayID else { continue }
