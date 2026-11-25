@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct PrompterView: View {
     @ObservedObject var settings: PrompterSettings
@@ -186,6 +187,7 @@ struct HoverControls: View {
     @ObservedObject var settings: PrompterSettings
     @ObservedObject var engine: ScrollEngine
     @ObservedObject var mic: MicrophoneMonitor
+    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         HStack(spacing: 10) {
@@ -208,6 +210,11 @@ struct HoverControls: View {
             control(settings.mode == .classic ? "waveform" : "play.circle",
                     help: settings.mode == .classic ? "Switch to Voice-Activated" : "Switch to Classic") {
                 settings.mode = settings.mode == .classic ? .voiceActivated : .classic
+            }
+
+            control("gearshape.fill", help: "Settings") {
+                NSApp.activate()
+                openSettings()
             }
         }
         .padding(.horizontal, 12)
