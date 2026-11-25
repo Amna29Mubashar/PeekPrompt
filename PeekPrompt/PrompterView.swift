@@ -78,8 +78,12 @@ struct PrompterView: View {
                 Button(settings.presentationMode ? String(localized: "Previous Slide") : String(localized: "Previous Chunk")) { engine.previousSegment() }
                     .disabled(engine.segmentIndex == 0)
             }
-            Toggle("Presentation Mode", isOn: $settings.presentationMode)
-            Toggle("Memorize Mode", isOn: $settings.memorizeMode)
+            if Edition.isProBuild {
+                Toggle(Edition.hasPro ? String(localized: "Presentation Mode") : String(localized: "Presentation Mode") + " · Pro",
+                       isOn: $settings.presentationMode)
+                Toggle(Edition.hasPro ? String(localized: "Memorize Mode") : String(localized: "Memorize Mode") + " · Pro",
+                       isOn: $settings.memorizeMode)
+            }
             Picker("Script", selection: Binding(
                 get: { settings.currentScriptID },
                 set: { settings.selectScript($0) }
@@ -162,14 +166,13 @@ private struct ContentHeightKey: PreferenceKey {
 struct ScriptViewport: View {
     @ObservedObject var settings: PrompterSettings
     @ObservedObject var engine: ScrollEngine
-    @ObservedObject var tracker: SpeechTracker = .shared
 
     /// The current slide/chunk (or whole script), with Memorize mode's hidden words applied.
     private var shownText: String {
         let text = engine.displayedText
-        guard settings.memorizeMode else { return text }
-        let reveal = settings.mode == .wordTracking ? tracker.spokenUTF16Offset : 0
-        return settings.memorizeLevel.apply(to: text, revealUpTo: reveal)
+        guard settings.memorizeMode, let pro = Edition.pro else { return text }
+        let reveal = settings.mode == .wordTracking ? engine.spokenUTF16Offset : 0
+        return pro.memorize(text, level: settings.memorizeLevel, revealUpTo: reveal)
     }
 
     /// The line you're reading sits this far down the text area.
@@ -180,7 +183,7 @@ struct ScriptViewport: View {
             ZStack(alignment: .topTrailing) {
                 Text(ScriptFormatter.attributed(shownText, fontSize: settings.fontSize,
                                                 family: settings.fontFamily, theme: settings.theme,
-                                                spokenUTF16Offset: settings.mode == .wordTracking ? tracker.spokenUTF16Offset : 0))
+                                                spokenUTF16Offset: settings.mode == .wordTracking ? engine.spokenUTF16Offset : 0))
                     .lineSpacing(CGFloat(settings.lineSpacing))
                     .multilineTextAlignment(.center)
                     .frame(width: max(geo.size.width - 28, 50))
@@ -370,8 +373,8 @@ struct HoverControls: View {
 
                 Menu {
                     Picker("Scrolling Mode", selection: $settings.mode) {
-                        ForEach(ScrollMode.allCases) { mode in
-                            Label(mode.title, systemImage: mode.symbol).tag(mode)
+                        ForEach(Edition.availableModes) { mode in
+                            Label(Edition.label(for: mode), systemImage: mode.symbol).tag(mode)
                         }
                     }
                     .pickerStyle(.inline)

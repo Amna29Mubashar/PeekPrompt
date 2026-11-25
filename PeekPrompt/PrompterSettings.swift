@@ -305,7 +305,8 @@ final class PrompterSettings: ObservableObject {
     @Published var presentationMode: Bool { didSet { defaults.set(presentationMode, forKey: Key.presentationMode) } }
     /// Practice: one chunk at a time, with words progressively hidden.
     @Published var memorizeMode: Bool { didSet { defaults.set(memorizeMode, forKey: Key.memorizeMode) } }
-    @Published var memorizeLevel: MemorizeLevel { didSet { defaults.set(memorizeLevel.rawValue, forKey: Key.memorizeLevel) } }
+    /// Memorize mode's hiding level (0 = show all … 3 = first letters only).
+    @Published var memorizeLevel: Int { didSet { defaults.set(memorizeLevel, forKey: Key.memorizeLevel) } }
     @Published var endAction: EndAction { didSet { defaults.set(endAction.rawValue, forKey: Key.endAction) } }
     /// Target length of the talk in minutes, for the pacing timer. 0 = no target.
     @Published var targetMinutes: Double { didSet { defaults.set(targetMinutes, forKey: Key.targetMinutes) } }
@@ -383,6 +384,25 @@ final class PrompterSettings: ObservableObject {
     @Published var isPrompterVisible = true
     @Published var isSettingsOpen = false
 
+    // MARK: Editions
+
+    /// True if any Pro-only setting is switched on.
+    var usesProSettings: Bool {
+        mode == .wordTracking || presentationMode || memorizeMode || autoSpeed
+            || targetMinutes > 0 || endAction == .next
+    }
+
+    /// Without Pro, switches Pro-only settings back to their free equivalents.
+    func enforceEdition() {
+        guard !Edition.hasPro else { return }
+        if mode == .wordTracking { mode = .voiceActivated }
+        if presentationMode { presentationMode = false }
+        if memorizeMode { memorizeMode = false }
+        if autoSpeed { autoSpeed = false }
+        if targetMinutes > 0 { targetMinutes = 0 }
+        if endAction == .next { endAction = .stop }
+    }
+
     /// The microphone level (0...1) that counts as "speaking".
     var speakingThreshold: CGFloat {
         CGFloat(0.45 - voiceSensitivity * 0.35)
@@ -417,7 +437,7 @@ final class PrompterSettings: ObservableObject {
         pauseOnHover = d.object(forKey: Key.pauseOnHover) as? Bool ?? true
         presentationMode = d.object(forKey: Key.presentationMode) as? Bool ?? false
         memorizeMode = d.object(forKey: Key.memorizeMode) as? Bool ?? false
-        memorizeLevel = MemorizeLevel(rawValue: d.integer(forKey: Key.memorizeLevel)) ?? .hideSome
+        memorizeLevel = d.object(forKey: Key.memorizeLevel) as? Int ?? 1
         endAction = EndAction(rawValue: d.string(forKey: Key.endAction) ?? "") ?? .stop
         backgroundOpacity = d.object(forKey: Key.backgroundOpacity) as? Double ?? 1
         autoSpeed = d.object(forKey: Key.autoSpeed) as? Bool ?? false

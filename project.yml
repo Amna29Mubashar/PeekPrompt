@@ -25,5 +25,4 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: PeekPrompt
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
         INFOPLIST_KEY_NSSpeechRecognitionUsageDescription: "Word Tracking listens to the words you say so the script can follow along. When your Mac supports it, recognition happens on-device."
-        INFOPLIST_KEY_NSLocalNetworkUsageDescription: "The phone remote lets you control PeekPrompt from your phone's browser on the same Wi-Fi."
         INFOPLIST_KEY_NSMicrophoneUsageDescription: "PeekPrompt uses the microphone to scroll while you speak, follow your words and make the border glow. Nothing is recorded or saved."

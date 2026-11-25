@@ -7,6 +7,13 @@ import Carbon.HIToolbox
 struct PeekPromptApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
+    init() {
+        // The App Store edition plugs in its Pro features before anything else starts.
+        #if PRO
+        ProEdition.install()
+        #endif
+    }
+
     var body: some Scene {
         MenuBarExtra {
             MenuContent(settings: .shared, engine: .shared, mic: .shared)
@@ -25,9 +32,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var windowController: PrompterWindowController?
     private var cancellables = Set<AnyCancellable>()
 
-    private let settings = PrompterSettings.shared
-    private let engine = ScrollEngine.shared
-    private let mic = MicrophoneMonitor.shared
+    private var settings: PrompterSettings { .shared }
+    private var engine: ScrollEngine { .shared }
+    private var mic: MicrophoneMonitor { .shared }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory) // menu bar app, no Dock icon
@@ -44,12 +51,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
 
+        // Pro-only settings need Pro. The free edition turns them off at launch; the Pro
+        // edition checks the subscription itself (it may still be loading here).
+        if !Edition.isProBuild { settings.enforceEdition() }
+        Publishers.MergeMany(
+            settings.$mode.map { _ in () }.eraseToAnyPublisher(),
+            settings.$presentationMode.map { _ in () }.eraseToAnyPublisher(),
+            settings.$memorizeMode.map { _ in () }.eraseToAnyPublisher(),
+            settings.$autoSpeed.map { _ in () }.eraseToAnyPublisher(),
+            settings.$targetMinutes.map { _ in () }.eraseToAnyPublisher(),
+            settings.$endAction.map { _ in () }.eraseToAnyPublisher()
+        )
+        .dropFirst(6) // ignore the current values; react to changes
+        .receive(on: RunLoop.main)
+        .sink { [weak self] in
+            guard let self, self.settings.usesProSettings, !Edition.hasPro else { return }
+            // Someone picked a Pro feature without Pro: offer the upgrade, keep the free setting.
+            Edition.pro?.showUpgrade()
+            self.settings.enforceEdition()
+        }
+        .store(in: &cancellables)
+
         // Leaving word-tracking mode stops speech recognition.
         settings.$mode
             .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { mode in
-                if mode != .wordTracking { SpeechTracker.shared.stop() }
+                if mode != .wordTracking { Edition.pro?.stopListening() }
                 if ScrollEngine.shared.isRunning { ScrollEngine.shared.pause() }
             }
             .store(in: &cancellables)
@@ -115,12 +143,11 @@ struct MenuContent: View {
             }
         }
 
-        Toggle("Presentation Mode (one slide at a time)", isOn: $settings.presentationMode)
-        Toggle("Memorize Mode", isOn: $settings.memorizeMode)
+        if let extra = Edition.pro?.view(for: .menuItems) { extra }
 
         Picker("Scrolling Mode", selection: $settings.mode) {
-            ForEach(ScrollMode.allCases) { mode in
-                Text(mode.title).tag(mode)
+            ForEach(Edition.availableModes) { mode in
+                Text(Edition.label(for: mode)).tag(mode)
             }
         }
 

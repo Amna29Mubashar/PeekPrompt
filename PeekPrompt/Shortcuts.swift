@@ -72,6 +72,11 @@ enum ShortcutAction: String, CaseIterable, Identifiable, Codable {
 
     var id: String { rawValue }
 
+    /// Slide shortcuts only matter with Presentation/Memorize mode (Pro).
+    static var available: [ShortcutAction] {
+        Edition.isProBuild ? allCases : allCases.filter { $0 != .nextSegment && $0 != .previousSegment }
+    }
+
     var title: String {
         switch self {
         case .handsFreeStart: return String(localized: "Start / pause (hands-free start)")

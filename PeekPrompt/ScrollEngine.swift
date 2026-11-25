@@ -19,6 +19,9 @@ final class ScrollEngine: ObservableObject {
     /// Seconds left in the 3-2-1 countdown, or nil when not counting down.
     @Published private(set) var countdown: Int?
 
+    /// Word Tracking: where the already-read text ends (UTF-16 offset), set by the Pro edition.
+    @Published var spokenUTF16Offset = 0
+
     /// Slides (Presentation mode) or chunks (Memorize mode). Empty = whole script at once.
     @Published private(set) var segments: [String] = []
     @Published private(set) var segmentIndex = 0
@@ -46,7 +49,8 @@ final class ScrollEngine: ObservableObject {
 
     private let settings: PrompterSettings
     private let mic: MicrophoneMonitor
-    private let tracker = SpeechTracker.shared
+    /// Pro features, if this is the Pro edition.
+    private var pro: ProFeatures? { Edition.pro }
     private var timer: Timer?
     private var countdownTimer: Timer?
     /// True during the short pause at the end before looping / moving on.
@@ -75,23 +79,15 @@ final class ScrollEngine: ObservableObject {
 
     // MARK: Slides & chunks
 
-    private func rebuildSegments() {
-        let script = settings.script
-        let newSegments: [String]
-        if settings.presentationMode {
-            let slides = ScriptSegments.slides(script)
-            newSegments = slides.count > 1 ? slides : []
-        } else if settings.memorizeMode {
-            let chunks = ScriptSegments.chunks(script)
-            newSegments = chunks.count > 1 ? chunks : []
-        } else {
-            newSegments = []
-        }
+    func rebuildSegments() {
+        let newSegments = pro?.segments(for: settings.script,
+                                        presentation: settings.presentationMode,
+                                        memorize: settings.memorizeMode) ?? []
         if newSegments != segments {
             segments = newSegments
             segmentIndex = 0
         }
-        tracker.load(script: displayedText)
+        pro?.loadTracking(text: displayedText)
     }
 
     func nextSegment() {
@@ -107,7 +103,7 @@ final class ScrollEngine: ObservableObject {
     private func goToSegment(_ index: Int) {
         segmentIndex = index
         offset = 0
-        tracker.load(script: displayedText)
+        pro?.loadTracking(text: displayedText)
         if isRunning { lastFrameTime = CACurrentMediaTime() }
     }
 
@@ -118,11 +114,10 @@ final class ScrollEngine: ObservableObject {
         isRunning = true
         if settings.mode == .voiceActivated {
             mic.start()
-            if settings.autoSpeed { tracker.start() } // only to measure your pace
+            if settings.autoSpeed { pro?.startListening(measureOnly: true) } // only to measure your pace
         }
         if settings.mode == .wordTracking {
-            if tracker.words.isEmpty { tracker.load(script: displayedText) }
-            tracker.start()
+            pro?.startListening(measureOnly: false)
         }
 
         // Count down only when starting from the top, so resuming mid-script is instant.
@@ -136,7 +131,7 @@ final class ScrollEngine: ObservableObject {
     func pause() {
         isRunning = false
         isAdvancing = false
-        tracker.stop()
+        pro?.stopListening()
         cancelCountdown()
         stopTimer()
     }
@@ -174,9 +169,9 @@ final class ScrollEngine: ObservableObject {
         elapsed = 0
         if isSegmented && segmentIndex != 0 {
             segmentIndex = 0
-            tracker.load(script: displayedText)
+            pro?.loadTracking(text: displayedText)
         }
-        tracker.resetPosition()
+        pro?.resetTracking()
         if isRunning { lastFrameTime = CACurrentMediaTime() }
     }
 
@@ -222,9 +217,9 @@ final class ScrollEngine: ObservableObject {
     /// Points per second to scroll right now. With Auto speed on in Voice-Activated mode,
     /// this follows your measured words-per-minute; otherwise it's the slider value.
     var effectiveSpeed: CGFloat {
-        if settings.mode == .voiceActivated, settings.autoSpeed,
-           let wpm = tracker.wordsPerMinute, !tracker.words.isEmpty, contentHeight > 0 {
-            let pointsPerWord = contentHeight / CGFloat(tracker.words.count)
+        if settings.mode == .voiceActivated, settings.autoSpeed, let pro,
+           let wpm = pro.wordsPerMinute, pro.trackedWordCount > 0, contentHeight > 0 {
+            let pointsPerWord = contentHeight / CGFloat(pro.trackedWordCount)
             return min(max(CGFloat(wpm / 60) * pointsPerWord, 5), 150)
         }
         return CGFloat(settings.speed)
@@ -267,18 +262,17 @@ final class ScrollEngine: ObservableObject {
         let hoverPaused = isHovering && settings.pauseOnHover
 
         // Word tracking: glide toward wherever your voice is in the script.
-        if settings.mode == .wordTracking {
+        if settings.mode == .wordTracking, let pro {
             guard !hoverPaused, contentHeight > 0 else {
                 if isAdvancing { isAdvancing = false }
                 return
             }
-            let target = CGFloat(tracker.spokenFraction) * maxOffset
+            let target = CGFloat(pro.trackedFraction) * maxOffset
             let gap = target - offset
             let moving = abs(gap) > 0.5
             if isAdvancing != moving { isAdvancing = moving }
             if moving { offset += gap * CGFloat(min(1, deltaTime * 5)) }
-            if !tracker.words.isEmpty, tracker.spokenWordCount >= tracker.words.count,
-               !isSegmented || isOnLastSegment {
+            if pro.trackingFinished, !isSegmented || isOnLastSegment {
                 reachedEnd()
             }
             return
@@ -291,7 +285,7 @@ final class ScrollEngine: ObservableObject {
         case .voiceActivated:
             shouldMove = !hoverPaused && !mic.isMuted && mic.isSpeaking
         case .wordTracking:
-            shouldMove = false // handled above
+            shouldMove = false // handled above (Pro); the free edition never uses this mode
         }
 
         if isAdvancing != shouldMove { isAdvancing = shouldMove }

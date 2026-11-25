@@ -56,119 +56,19 @@ private struct ScriptTab: View {
     @ObservedObject var settings: PrompterSettings
     @ObservedObject var dictation: Dictation = .shared
 
-    @State private var newFolderName = ""
-    @State private var isNamingFolder = false
-    @State private var folderBeingRenamed: String?
-    @State private var renameText = ""
-    @State private var isPolishing = false
-    /// Folder name currently highlighted while dragging a script over it.
-    @State private var dropTarget: String?
-    private let otherScriptsDropID = "\u{0}other"
-
     var body: some View {
         HStack(spacing: 12) {
-            // Library
-            VStack(spacing: 0) {
-                List(selection: Binding<UUID?>(
-                    get: { settings.currentScriptID },
-                    set: { if let id = $0 { settings.selectScript(id) } }
-                )) {
-                    ForEach(settings.folderNames, id: \.self) { folder in
-                        Section {
-                            scriptRows(inFolder: folder)
-                        } header: {
-                            Label(folder, systemImage: dropTarget == folder ? "folder.fill" : "folder")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .contentShape(Rectangle())
-                                .foregroundStyle(dropTarget == folder ? Color.accentColor : Color.secondary)
-                                .onDrop(of: [.text], isTargeted: Binding(
-                                    get: { dropTarget == folder },
-                                    set: { dropTarget = $0 ? folder : (dropTarget == folder ? nil : dropTarget) }
-                                )) { providers in
-                                    moveDroppedScripts(providers, to: folder)
-                                }
-                                .contextMenu {
-                                    Button("Rename Folder…") {
-                                        renameText = folder
-                                        folderBeingRenamed = folder
-                                    }
-                                    Button("New Script in Folder") { settings.addScript(folder: folder) }
-                                    Divider()
-                                    Button("Delete Folder (keeps scripts)", role: .destructive) {
-                                        settings.deleteFolder(folder)
-                                    }
-                                }
-                        }
-                    }
-
-                    Section {
-                        scriptRows(inFolder: nil)
-                    } header: {
-                        if !settings.folderNames.isEmpty {
-                            Text("Other Scripts")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .contentShape(Rectangle())
-                                .foregroundStyle(dropTarget == otherScriptsDropID ? Color.accentColor : Color.secondary)
-                                .onDrop(of: [.text], isTargeted: Binding(
-                                    get: { dropTarget == otherScriptsDropID },
-                                    set: { dropTarget = $0 ? otherScriptsDropID : (dropTarget == otherScriptsDropID ? nil : dropTarget) }
-                                )) { providers in
-                                    moveDroppedScripts(providers, to: nil)
-                                }
-                        }
-                    }
+            // Library (the Pro edition swaps in a version with folders)
+            Group {
+                if let proLibrary = Edition.pro?.view(for: .scriptLibrary) {
+                    proLibrary
+                } else {
+                    ScriptLibraryList(settings: settings)
                 }
-                .listStyle(.sidebar)
-
-                Divider()
-                HStack(spacing: 2) {
-                    Menu {
-                        Button("New Script") { settings.addScript() }
-                        Button("New Folder…") {
-                            newFolderName = ""
-                            isNamingFolder = true
-                        }
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .menuStyle(.borderlessButton)
-                    .fixedSize()
-                    .help("New script or folder")
-
-                    Button { settings.deleteScript(settings.currentScriptID) } label: { Image(systemName: "minus") }
-                        .help("Delete script")
-                        .disabled(settings.scripts.count < 2)
-                    Spacer()
-                    Button {
-                        for file in ScriptImporter.chooseFiles() {
-                            settings.addScript(title: file.title, body: file.text)
-                        }
-                    } label: {
-                        Label("Import", systemImage: "square.and.arrow.down")
-                    }
-                    .help("Import .txt, .md, .rtf, .docx, .pdf, or PowerPoint speaker notes (.pptx)")
-                }
-                .buttonStyle(.borderless)
-                .padding(6)
             }
             .frame(width: 190)
             .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
-            .alert("New Folder", isPresented: $isNamingFolder) {
-                TextField("Folder name", text: $newFolderName)
-                Button("Create") { settings.createFolder(named: newFolderName) }
-                Button("Cancel", role: .cancel) {}
-            }
-            .alert("Rename Folder", isPresented: Binding(
-                get: { folderBeingRenamed != nil },
-                set: { if !$0 { folderBeingRenamed = nil } }
-            )) {
-                TextField("Folder name", text: $renameText)
-                Button("Rename") {
-                    if let old = folderBeingRenamed { settings.renameFolder(old, to: renameText) }
-                }
-                Button("Cancel", role: .cancel) {}
-            }
 
             // Editor
             VStack(alignment: .leading, spacing: 8) {
@@ -180,25 +80,7 @@ private struct ScriptTab: View {
                     .textFieldStyle(.plain)
                     .font(.title3.weight(.semibold))
 
-                    if !settings.folderNames.isEmpty {
-                        Picker(selection: Binding<String>(
-                            get: {
-                                let folder = settings.scripts.first { $0.id == settings.currentScriptID }?.folder
-                                return folder.flatMap { settings.folderNames.contains($0) ? $0 : nil } ?? ""
-                            },
-                            set: { settings.setFolder($0.isEmpty ? nil : $0, for: settings.currentScriptID) }
-                        )) {
-                            Text("No Folder").tag("")
-                            Divider()
-                            ForEach(settings.folderNames, id: \.self) { name in
-                                Label(name, systemImage: "folder").tag(name)
-                            }
-                        } label: {
-                            Label("Folder", systemImage: "folder")
-                        }
-                        .fixedSize()
-                        .help("Move this script into a folder")
-                    }
+                    if let accessory = Edition.pro?.view(for: .scriptTitleAccessory) { accessory }
                 }
 
                 TextEditor(text: $settings.script)
@@ -233,13 +115,7 @@ private struct ScriptTab: View {
                     .fixedSize()
                     .help("Speak and your words are added to the end of the script")
 
-                    Button {
-                        isPolishing = true
-                    } label: {
-                        Label("Magic Polish", systemImage: "wand.and.stars")
-                    }
-                    .fixedSize()
-                    .help("Rewrite this script so it's easier to say out loud")
+                    if let tools = Edition.pro?.view(for: .scriptEditorTools) { tools }
 
                     Spacer(minLength: 0)
                 }
@@ -269,58 +145,6 @@ private struct ScriptTab: View {
             }
         }
         .onDisappear { dictation.stop() }
-        .sheet(isPresented: $isPolishing) {
-            MagicPolishSheet(settings: settings)
-        }
-    }
-
-    /// Scripts in one folder (or unfiled), draggable to reorder.
-    @ViewBuilder
-    private func scriptRows(inFolder folder: String?) -> some View {
-        if let folder, settings.scripts(inFolder: folder).isEmpty {
-            Text("Drag scripts onto the folder name, or pick it from the Folder menu")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
-                .lineLimit(2)
-                .selectionDisabled()
-        }
-        ForEach(settings.scripts(inFolder: folder)) { script in
-            Text(script.title.isEmpty ? String(localized: "Untitled") : script.title)
-                .lineLimit(1)
-                .tag(script.id)
-                // Lets the row be dropped onto a folder name. Reordering still works.
-                .itemProvider { NSItemProvider(object: script.id.uuidString as NSString) }
-                .contextMenu {
-                    Button("Duplicate") { settings.duplicateScript(script.id) }
-                    Menu("Move to Folder") {
-                        Button("None") { settings.setFolder(nil, for: script.id) }
-                        if !settings.folderNames.isEmpty { Divider() }
-                        ForEach(settings.folderNames, id: \.self) { name in
-                            Button(name) { settings.setFolder(name, for: script.id) }
-                        }
-                    }
-                    Divider()
-                    Button("Delete", role: .destructive) { settings.deleteScript(script.id) }
-                        .disabled(settings.scripts.count < 2)
-                }
-        }
-        .onMove { source, destination in
-            settings.moveScripts(inFolder: folder, from: source, to: destination)
-        }
-    }
-
-    /// Moves dragged scripts (identified by their ID text) into `folder` (nil = no folder).
-    private func moveDroppedScripts(_ providers: [NSItemProvider], to folder: String?) -> Bool {
-        var handled = false
-        for provider in providers where provider.canLoadObject(ofClass: NSString.self) {
-            handled = true
-            _ = provider.loadObject(ofClass: NSString.self) { object, _ in
-                guard let text = object as? String, let id = UUID(uuidString: text) else { return }
-                DispatchQueue.main.async { settings.setFolder(folder, for: id) }
-            }
-        }
-        dropTarget = nil
-        return handled
     }
 
     /// Average speaking pace is roughly 150 words per minute.
@@ -332,50 +156,90 @@ private struct ScriptTab: View {
     }
 }
 
+/// The free edition's script list: drag to reorder, right-click for more.
+struct ScriptLibraryList: View {
+    @ObservedObject var settings: PrompterSettings
+
+    var body: some View {
+        VStack(spacing: 0) {
+            List(selection: Binding<UUID?>(
+                get: { settings.currentScriptID },
+                set: { if let id = $0 { settings.selectScript(id) } }
+            )) {
+                ForEach(settings.scripts) { script in
+                    Text(script.title.isEmpty ? String(localized: "Untitled") : script.title)
+                        .lineLimit(1)
+                        .tag(script.id)
+                        .contextMenu {
+                            Button("Duplicate") { settings.duplicateScript(script.id) }
+                            Divider()
+                            Button("Delete", role: .destructive) { settings.deleteScript(script.id) }
+                                .disabled(settings.scripts.count < 2)
+                        }
+                }
+                .onMove { source, destination in
+                    settings.scripts.move(fromOffsets: source, toOffset: destination)
+                }
+            }
+            .listStyle(.sidebar)
+
+            Divider()
+            HStack(spacing: 2) {
+                Button { settings.addScript() } label: { Image(systemName: "plus") }
+                    .help("New Script")
+                Button { settings.deleteScript(settings.currentScriptID) } label: { Image(systemName: "minus") }
+                    .help("Delete script")
+                    .disabled(settings.scripts.count < 2)
+                Spacer()
+                ImportButton(settings: settings)
+            }
+            .buttonStyle(.borderless)
+            .padding(6)
+        }
+    }
+}
+
+/// Opens files and adds each one as a new script.
+struct ImportButton: View {
+    @ObservedObject var settings: PrompterSettings
+
+    var body: some View {
+        Button {
+            for file in ScriptImporter.chooseFiles() {
+                settings.addScript(title: file.title, body: file.text)
+            }
+        } label: {
+            Label("Import", systemImage: "square.and.arrow.down")
+        }
+        .help(Edition.isProBuild
+              ? String(localized: "Import .txt, .md, .rtf, .docx, .pdf, or PowerPoint speaker notes (.pptx)")
+              : String(localized: "Import .txt, .md, .rtf or .docx"))
+    }
+}
+
 // MARK: - Scrolling
 
 private struct ScrollingTab: View {
     @ObservedObject var settings: PrompterSettings
     @ObservedObject var mic: MicrophoneMonitor
-    @ObservedObject var tracker: SpeechTracker = .shared
 
     var body: some View {
         Form {
             Section {
                 Picker("Mode", selection: $settings.mode) {
-                    ForEach(ScrollMode.allCases) { mode in
-                        Label(mode.title, systemImage: mode.symbol).tag(mode)
+                    ForEach(Edition.availableModes) { mode in
+                        Label(Edition.label(for: mode), systemImage: mode.symbol).tag(mode)
                     }
                 }
                 .pickerStyle(.segmented)
                 Text(settings.mode.detail)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                if settings.mode == .wordTracking, let error = tracker.errorMessage {
-                    Text(error)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                }
             }
 
-            Section("Presenting & practice") {
-                Toggle("Presentation mode: one slide at a time", isOn: $settings.presentationMode)
-                Text("Slides are separated by a [Slide 1] line, added automatically when you import a PowerPoint, or by a line with just ---. Use ⌃⌥→ and ⌃⌥← (or the hover and phone buttons) to change slides.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            // Pro: Presentation & Memorize modes, Word Tracking status
+            if let proSection = Edition.pro?.view(for: .scrollingSection) { proSection }
 
-                Toggle("Memorize mode: practice in small chunks", isOn: $settings.memorizeMode)
-                if settings.memorizeMode {
-                    Picker("Hide", selection: $settings.memorizeLevel) {
-                        ForEach(MemorizeLevel.allCases) { level in
-                            Text(level.title).tag(level)
-                        }
-                    }
-                    Text("Shows a paragraph at a time and hides words so you practice recalling them. Raise the level as you learn it. In Word Tracking mode, hidden words appear as you say them.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
 
             Section("Speed") {
                 Slider(value: $settings.speed, in: 5...150) {
@@ -385,21 +249,11 @@ private struct ScrollingTab: View {
                 } maximumValueLabel: {
                     Image(systemName: "hare")
                 }
-                Toggle("Auto speed: match how fast I talk (Voice-Activated mode)", isOn: $settings.autoSpeed)
-                if settings.autoSpeed {
-                    Text(autoSpeedCaption)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                // Pro: Auto speed and the pacing timer
+                if let extras = Edition.pro?.view(for: .speedExtras) { extras }
                 Toggle("Pause while the pointer is over the prompter", isOn: $settings.pauseOnHover)
-                Picker("Target length (pacing timer)", selection: $settings.targetMinutes) {
-                    Text("No target").tag(0.0)
-                    ForEach([0.5, 1, 2, 3, 5, 10, 15, 20, 30], id: \.self) { minutes in
-                        Text(minutes < 1 ? "30 seconds" : "\(Int(minutes)) min").tag(minutes)
-                    }
-                }
                 Picker("At the end of a script", selection: $settings.endAction) {
-                    ForEach(EndAction.allCases) { action in
+                    ForEach(Edition.availableEndActions) { action in
                         Text(action.title).tag(action)
                     }
                 }
@@ -437,13 +291,6 @@ private struct ScrollingTab: View {
             }
         }
         .formStyle(.grouped)
-    }
-
-    private var autoSpeedCaption: String {
-        if let wpm = tracker.wordsPerMinute {
-            return String(localized: "You're speaking at about \(Int(wpm)) words per minute. The slider is used until PeekPrompt has heard a few seconds of you.")
-        }
-        return String(localized: "Start reading in Voice-Activated mode. After a few seconds, PeekPrompt measures your pace and takes over from the speed slider.")
     }
 
     private var meterCaption: String {
@@ -599,7 +446,6 @@ private struct LabeledSlider: View {
 
 private struct PrivacyTab: View {
     @ObservedObject var settings: PrompterSettings
-    @ObservedObject var remote: RemoteServer = .shared
 
     var body: some View {
         Form {
@@ -615,50 +461,13 @@ private struct PrivacyTab: View {
                 .foregroundStyle(.secondary)
             }
 
-            Section("Phone remote") {
-                Toggle("Control PeekPrompt from your phone", isOn: Binding(
-                    get: { remote.isRunning },
-                    set: { $0 ? remote.start() : remote.stop() }
-                ))
-
-                if remote.isRunning, let url = remote.address {
-                    HStack(alignment: .top, spacing: 14) {
-                        if let qr = RemoteServer.qrCode(for: url) {
-                            Image(nsImage: qr)
-                                .interpolation(.none)
-                                .resizable()
-                                .frame(width: 120, height: 120)
-                                .padding(6)
-                                .background(.white, in: RoundedRectangle(cornerRadius: 8))
-                        }
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Scan with your phone's camera. Your phone must be on the same Wi-Fi as this Mac.")
-                                .font(.caption)
-                            Text(url.absoluteString)
-                                .font(.system(.caption, design: .monospaced))
-                                .textSelection(.enabled)
-                            Button("Copy Link") {
-                                NSPasteboard.general.clearContents()
-                                NSPasteboard.general.setString(url.absoluteString, forType: .string)
-                            }
-                            Text("The link contains a secret code and changes each time you turn the remote on.")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                } else if let error = remote.errorMessage {
-                    Text(error).font(.caption).foregroundStyle(.red)
-                } else {
-                    Text("Turn this on to get a QR code. macOS may ask to let PeekPrompt find devices on your local network. Allow it.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
+            // Pro: phone remote
+            if let remoteSection = Edition.pro?.view(for: .privacySection) { remoteSection }
 
             Section("Keyboard shortcuts (work in any app)") {
                 Toggle("Enable global shortcuts", isOn: $settings.globalShortcuts)
                 if settings.globalShortcuts {
-                    ForEach(ShortcutAction.allCases) { action in
+                    ForEach(ShortcutAction.available) { action in
                         ShortcutRecorderRow(action: action, settings: settings)
                     }
                     HStack {
