@@ -41,6 +41,8 @@ After launch, PeekPrompt slides down from your notch with a sample script. There
 - There's also a menu bar icon, but on crowded MacBook menu bars macOS may hide it behind the notch.
 
 ### Writing and managing scripts
+<p align="center"><img src="docs/screens/script.png" width="560" alt="Script tab with the script library, editor and Import button"></p>
+
 Open **Settings → Script**.
 - The list on the left is your **script library**. Click **+** to add a script, **−** to delete one, or right-click a script to duplicate it.
 - Rename a script by editing the title above the text.
@@ -56,6 +58,8 @@ Click **Import** at the bottom of the script list and pick one or more files:
 Each file becomes a new script named after the file.
 
 ### Choosing how it scrolls
+<p align="center"><img src="docs/screens/modes.png" width="560" alt="Scrolling mode picker: Classic, Voice-Activated, Word Tracking"></p>
+
 Open **Settings → Scrolling**, or click the mode button in the hover controls to cycle through the modes.
 
 | Mode | Best for | How it works |
@@ -64,23 +68,34 @@ Open **Settings → Scrolling**, or click the mode button in the hover controls 
 | **Voice-Activated** | Natural talks with pauses | Moves only while you're speaking and waits when you stop. Turn on **Auto speed** and it measures your words per minute and matches it. |
 | **Word Tracking** | Reading word for word | Listens to *what* you say and keeps your place, even if you skip a line. Words you've already said fade back. |
 
+<p align="center"><img src="docs/screens/voice.png" width="560" alt="Voice sensitivity slider with live microphone level meter"></p>
+
 **Tuning voice detection:** in Settings → Scrolling, watch the live mic bar while you talk. It should cross the white line when you speak and stay below it when you're silent. If it doesn't, move **Sensitivity** toward Whisper or Loud.
 
 **Word Tracking** uses Apple's speech recognition. When your Mac supports it, it runs entirely on-device. The first time, macOS asks for permission.
 
 ### Before you start: countdown and pacing
+<p align="center"><img src="docs/screens/speed.png" width="560" alt="Scroll speed, auto speed, pause on hover, target length and countdown settings"></p>
+
 - **Countdown:** pressing Play from the top shows 3… 2… 1… first, so you have time to look at the camera. Change it to 5 or 10 seconds, or turn it off, in Settings → Scrolling.
 - **Pacing timer:** set a **Target length**, for example 2 min. The area to the right of the notch then shows elapsed time against your target, and whether you're **on time** (green), **behind** (orange) or **ahead** (blue).
 
 ### Making it comfortable to read
+<p align="center"><img src="docs/screens/fonts.png" width="560" alt="Font menu showing Rounded, Standard, Serif, Monospaced and OpenDyslexic"></p>
+
 Open **Settings → Appearance**.
 - **Font:** Rounded, Standard, Serif, Monospaced, or **OpenDyslexic**, which is designed for readers with dyslexia.
 - **Theme:** Dark or Light.
 - **Font size, line spacing, width and height.**
 - **Highlight the line you're reading:** the current line is full brightness and the rest is dimmed, so your eyes don't wander.
+
+<p align="center"><img src="docs/screens/glow.png" width="560" alt="Size settings and voice glow color and strength"></p>
+
 - **Voice glow:** a gradient border that brightens and thickens as you talk. Choose a color set and adjust **Glow strength**.
 
 ### Moving the prompter
+<p align="center"><img src="docs/screens/position.png" width="560" alt="Position setting: under the notch or anywhere"></p>
+
 By default it sits right under the camera for the best eye contact. To put it somewhere else, go to **Settings → Appearance → Position → Anywhere**, or right-click → **Move Anywhere**, then drag it. It remembers where you leave it. **Reset Position** or **Move Back Under Notch** undoes it.
 
 ### Controlling it from your phone
@@ -88,7 +103,11 @@ By default it sits right under the camera for the best eye contact. To put it so
 2. Scan the QR code with your phone's camera. Your phone must be on the **same Wi-Fi** as your Mac.
 3. You get big buttons for play/pause, restart, back/ahead, slower/faster, mode, mute and show/hide, plus a progress bar.
 
-<p align="center"><img src="docs/phone-remote.png" width="300" alt="PeekPrompt phone remote in a mobile browser"></p>
+<p align="center">
+  <img src="docs/screens/remote-settings.png" width="440" alt="Phone remote setting with QR code">
+  &nbsp;&nbsp;
+  <img src="docs/phone-remote.png" width="220" alt="PeekPrompt phone remote in a mobile browser">
+</p>
 
 The link contains a secret code that changes every time you turn the remote on, so nobody else on the network can control your prompter. macOS may ask to let PeekPrompt find devices on your local network; allow it.
 
@@ -96,6 +115,8 @@ The link contains a secret code that changes every time you turn the remote on, 
 **Settings → Privacy & Keys → Hide prompter from screenshots, screen sharing and recordings** is on by default. See the note on Loom below.
 
 ## Keyboard shortcuts
+
+<p align="center"><img src="docs/screens/shortcuts.png" width="520" alt="Global keyboard shortcuts settings"></p>
 
 | Shortcut | Action |
 |---|---|
