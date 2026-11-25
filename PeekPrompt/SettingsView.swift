@@ -182,6 +182,11 @@ private struct ScrollingTab: View {
                         Text(minutes < 1 ? "30 seconds" : "\(Int(minutes)) min").tag(minutes)
                     }
                 }
+                Picker("At the end of a script", selection: $settings.endAction) {
+                    ForEach(EndAction.allCases) { action in
+                        Text(action.title).tag(action)
+                    }
+                }
                 Picker("Countdown before starting", selection: $settings.countdownSeconds) {
                     Text("Off").tag(0)
                     Text("3 seconds").tag(3)
@@ -300,6 +305,10 @@ private struct AppearanceTab: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                LabeledSlider(title: "Background opacity", value: Binding(
+                    get: { settings.backgroundOpacity * 100 },
+                    set: { settings.backgroundOpacity = $0 / 100 }
+                ), range: 30...100, unit: "%")
                 LabeledSlider(title: "Font size", value: $settings.fontSize, range: 10...36, unit: "pt")
                 LabeledSlider(title: "Line spacing", value: $settings.lineSpacing, range: 0...16, unit: "pt")
                 Toggle("Highlight the line you're reading", isOn: $settings.highlightReadingLine)
