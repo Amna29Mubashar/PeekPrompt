@@ -1,0 +1,614 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Start ${applicationName}": {
+      "localizations": {
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Iniciar ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Démarrer ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} starten"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Avvia ${applicationName}"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Iniciar ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}を開始"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} 시작"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "开始${applicationName}"
+            ]
+          }
+        },
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "ابدأ ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Start my script in ${applicationName}": {
+      "localizations": {
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Iniciar mi guion en ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Démarrer mon script dans ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Mein Skript in ${applicationName} starten"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Avvia il mio copione in ${applicationName}"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Iniciar meu roteiro no ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}で原稿を開始"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}에서 내 원고 시작"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "在${applicationName}中开始我的稿子"
+            ]
+          }
+        },
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "ابدأ نصّي في ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Play ${applicationName}": {
+      "localizations": {
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Reproducir ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Lancer ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} abspielen"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Riproduci ${applicationName}"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Reproduzir ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}を再生"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} 재생"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "播放${applicationName}"
+            ]
+          }
+        },
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "شغّل ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Pause ${applicationName}": {
+      "localizations": {
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Pausar ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Mettre ${applicationName} en pause"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} pausieren"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Metti in pausa ${applicationName}"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Pausar ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}を一時停止"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} 일시 정지"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "暂停${applicationName}"
+            ]
+          }
+        },
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "أوقف ${applicationName} مؤقتًا"
+            ]
+          }
+        }
+      }
+    },
+    "Stop ${applicationName}": {
+      "localizations": {
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Detener ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Arrêter ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} stoppen"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Ferma ${applicationName}"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Parar ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}を停止"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} 정지"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "停止${applicationName}"
+            ]
+          }
+        },
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "أوقف ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Restart ${applicationName}": {
+      "localizations": {
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Reiniciar ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Recommencer ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} neu starten"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Ricomincia ${applicationName}"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Reiniciar ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}を最初から"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName} 다시 시작"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "重新开始${applicationName}"
+            ]
+          }
+        },
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "أعد تشغيل ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Next slide in ${applicationName}": {
+      "localizations": {
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Siguiente diapositiva en ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Diapositive suivante dans ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Nächste Folie in ${applicationName}"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Slide successiva in ${applicationName}"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Próximo slide no ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}で次のスライド"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}에서 다음 슬라이드"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}下一张幻灯片"
+            ]
+          }
+        },
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "الشريحة التالية في ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Previous slide in ${applicationName}": {
+      "localizations": {
+        "es": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Diapositiva anterior en ${applicationName}"
+            ]
+          }
+        },
+        "fr": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Diapositive précédente dans ${applicationName}"
+            ]
+          }
+        },
+        "de": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Vorherige Folie in ${applicationName}"
+            ]
+          }
+        },
+        "it": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Slide precedente in ${applicationName}"
+            ]
+          }
+        },
+        "pt-BR": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "Slide anterior no ${applicationName}"
+            ]
+          }
+        },
+        "ja": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}で前のスライド"
+            ]
+          }
+        },
+        "ko": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}에서 이전 슬라이드"
+            ]
+          }
+        },
+        "zh-Hans": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "${applicationName}上一张幻灯片"
+            ]
+          }
+        },
+        "ar": {
+          "stringSet": {
+            "state": "translated",
+            "values": [
+              "الشريحة السابقة في ${applicationName}"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

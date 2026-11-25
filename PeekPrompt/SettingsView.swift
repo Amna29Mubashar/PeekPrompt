@@ -574,7 +574,7 @@ private struct PrivacyTab: View {
             }
 
             Section {
-                Text("Audio is only measured for loudness. Nothing is recorded, transcribed or sent anywhere.")
+                Text("Voice levels are measured on your Mac. Word Tracking and Dictation use Apple's speech recognition, which runs on your Mac when supported and otherwise on Apple's servers. PeekPrompt never saves or uploads recordings.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

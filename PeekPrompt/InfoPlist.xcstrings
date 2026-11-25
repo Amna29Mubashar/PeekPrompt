@@ -1,0 +1,186 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSMicrophoneUsageDescription": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeekPrompt usa el micrófono para desplazarse mientras hablas, seguir tus palabras y hacer brillar el borde. No se graba ni se guarda nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeekPrompt utilise le micro pour défiler pendant que vous parlez, suivre vos mots et faire briller la bordure. Rien n’est enregistré ni conservé."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeekPrompt nutzt das Mikrofon, um beim Sprechen zu scrollen, deinen Worten zu folgen und den Rand leuchten zu lassen. Nichts wird aufgenommen oder gespeichert."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeekPrompt usa il microfono per scorrere mentre parli, seguire le tue parole e far brillare il bordo. Nulla viene registrato o salvato."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O PeekPrompt usa o microfone para rolar enquanto você fala, acompanhar suas palavras e fazer a borda brilhar. Nada é gravado ou salvo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeekPromptはマイクを使って、話している間のスクロール、言葉の追跡、枠の発光を行います。録音や保存は一切しません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeekPrompt는 마이크를 사용해 말하는 동안 스크롤하고, 말을 따라가며, 테두리를 빛나게 합니다. 아무것도 녹음하거나 저장하지 않습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PeekPrompt 使用麦克风在你说话时滚动、跟随你的话语并让边框发光。不会录制或保存任何内容。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يستخدم PeekPrompt الميكروفون للتمرير أثناء حديثك ومتابعة كلماتك وجعل الإطار يتوهج. لا يُسجَّل أو يُحفظ أي شيء."
+          }
+        }
+      }
+    },
+    "NSSpeechRecognitionUsageDescription": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El seguimiento de palabras escucha lo que dices para que el guion te siga. Si tu Mac es compatible, el reconocimiento se hace en el dispositivo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le suivi des mots écoute ce que vous dites pour que le script vous suive. Si votre Mac le permet, la reconnaissance se fait sur l’appareil."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Wortverfolgung hört, was du sagst, damit das Skript mitläuft. Wenn dein Mac es unterstützt, erfolgt die Erkennung direkt auf dem Gerät."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il tracciamento parole ascolta ciò che dici così il copione ti segue. Se il tuo Mac lo supporta, il riconoscimento avviene sul dispositivo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O acompanhamento de palavras ouve o que você diz para o roteiro acompanhar. Se o seu Mac for compatível, o reconhecimento acontece no dispositivo."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "単語追跡は話した言葉を聞き取り、原稿を追従させます。Macが対応していれば、認識はデバイス上で行われます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "단어 추적은 말하는 단어를 들어 원고가 따라오게 합니다. Mac이 지원하면 기기에서 인식합니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "逐词跟随会聆听你说的话,让稿子跟着走。如果你的 Mac 支持,识别会在设备上完成。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يستمع تتبّع الكلمات إلى ما تقوله ليتابعك النص. إذا كان جهاز Mac يدعم ذلك، يتم التعرف على الجهاز نفسه."
+          }
+        }
+      }
+    },
+    "NSLocalNetworkUsageDescription": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El control remoto te permite manejar PeekPrompt desde el navegador del teléfono en la misma red Wi-Fi."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La télécommande vous permet de contrôler PeekPrompt depuis le navigateur de votre téléphone sur le même Wi-Fi."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit der Fernbedienung steuerst du PeekPrompt über den Browser deines Handys im selben WLAN."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il telecomando ti permette di controllare PeekPrompt dal browser del telefono sulla stessa rete Wi-Fi."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O controle remoto permite controlar o PeekPrompt pelo navegador do celular na mesma rede Wi-Fi."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リモコン機能を使うと、同じWi-Fi上のスマートフォンのブラウザからPeekPromptを操作できます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "리모컨 기능으로 같은 Wi-Fi의 휴대폰 브라우저에서 PeekPrompt를 제어할 수 있습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "遥控功能让你在同一 Wi-Fi 下通过手机浏览器控制 PeekPrompt。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يتيح لك التحكم عن بُعد التحكم في PeekPrompt من متصفح هاتفك على شبكة Wi-Fi نفسها."
+          }
+        }
+      }
+    },
+    "CFBundleDisplayName": {
+      "shouldTranslate": false
+    },
+    "CFBundleName": {
+      "shouldTranslate": false
+    }
+  },
+  "version": "1.0"
+}

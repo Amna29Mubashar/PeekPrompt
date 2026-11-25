@@ -30,7 +30,7 @@ A teleprompter that lives in your MacBook's notch, right under the camera, so yo
 - **Cues.** Anything in `[square brackets]` is dimmed and italic, so you know not to read it aloud.
 - **Global shortcuts** that work from any app.
 - **Live mic meter** in Settings, so you can tune voice sensitivity to your room.
-- **Private.** The microphone is only measured for loudness. Nothing is recorded, transcribed or sent anywhere.
+- **Private.** No accounts, no tracking, and recordings are never saved. Voice levels are measured on your Mac. Word Tracking and Dictation use Apple's speech recognition, which runs on-device when your Mac supports it.
 
 ## How to use
 
