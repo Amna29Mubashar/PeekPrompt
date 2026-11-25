@@ -1,9 +1,11 @@
 import AppKit
+import PDFKit
 import UniformTypeIdentifiers
 
 /// Turns documents into plain script text.
 ///  - .txt / .md: read as text
 ///  - .rtf / .docx / .doc / .odt / .html: macOS's built-in document reader
+///  - .pdf: the text of every page
 ///  - .pptx: the speaker notes of each slide (falls back to slide text when a slide has no notes)
 enum ScriptImporter {
     enum ImportError: LocalizedError {
@@ -18,7 +20,7 @@ enum ScriptImporter {
         }
     }
 
-    static let supportedExtensions = ["txt", "md", "markdown", "rtf", "rtfd", "docx", "doc", "odt", "html", "htm", "pptx"]
+    static let supportedExtensions = ["txt", "md", "markdown", "rtf", "rtfd", "docx", "doc", "odt", "html", "htm", "pptx", "pdf"]
 
     static var allowedContentTypes: [UTType] {
         supportedExtensions.compactMap { UTType(filenameExtension: $0) }
@@ -61,6 +63,11 @@ enum ScriptImporter {
             raw = try String(contentsOf: url, encoding: .utf8)
         case "pptx":
             raw = try PowerPointNotes.text(from: url)
+        case "pdf":
+            guard let document = PDFDocument(url: url) else { throw ImportError.unreadable(url.lastPathComponent) }
+            raw = (0..<document.pageCount)
+                .compactMap { document.page(at: $0)?.string }
+                .joined(separator: "\n\n")
         default:
             do {
                 raw = try NSAttributedString(url: url, options: [:], documentAttributes: nil).string

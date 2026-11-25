@@ -119,7 +119,7 @@ struct MenuContent: View {
             get: { settings.currentScriptID },
             set: { settings.selectScript($0) }
         )) {
-            ForEach(settings.scripts) { script in
+            ForEach(settings.orderedScripts) { script in
                 Text(script.title).tag(script.id)
             }
         }

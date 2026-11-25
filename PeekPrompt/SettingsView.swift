@@ -54,6 +54,7 @@ struct SettingsView: View {
 
 private struct ScriptTab: View {
     @ObservedObject var settings: PrompterSettings
+    @ObservedObject var dictation: Dictation = .shared
 
     @State private var newFolderName = ""
     @State private var isNamingFolder = false
@@ -159,7 +160,28 @@ private struct ScriptTab: View {
                     .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
 
+                if dictation.isDictating || dictation.errorMessage != nil {
+                    HStack(spacing: 6) {
+                        if dictation.isDictating {
+                            Image(systemName: "waveform").foregroundStyle(.red)
+                            Text(dictation.liveText.isEmpty ? "Listening… start talking." : dictation.liveText)
+                                .lineLimit(2)
+                        } else if let error = dictation.errorMessage {
+                            Text(error).foregroundStyle(.red)
+                        }
+                    }
+                    .font(.caption)
+                }
+
                 HStack {
+                    Button {
+                        dictation.toggle()
+                    } label: {
+                        Label(dictation.isDictating ? "Stop Dictating" : "Dictate",
+                              systemImage: dictation.isDictating ? "stop.circle.fill" : "mic")
+                    }
+                    .tint(dictation.isDictating ? .red : nil)
+                    .help("Speak and your words are added to the end of the script")
                     Text("\(settings.wordCount) words · about \(readingTime) to read")
                     Spacer()
                     Text("[cues] in brackets are dimmed")
@@ -169,6 +191,16 @@ private struct ScriptTab: View {
             }
         }
         .padding()
+        .onAppear {
+            // Dictated text goes at the end of the open script.
+            dictation.onText = { [weak settings] text in
+                guard let settings else { return }
+                let current = settings.script
+                let separator = current.isEmpty || current.hasSuffix("\n") || current.hasSuffix(" ") ? "" : " "
+                settings.script = current + separator + text
+            }
+        }
+        .onDisappear { dictation.stop() }
     }
 
     /// Scripts in one folder (or unfiled), draggable to reorder.
