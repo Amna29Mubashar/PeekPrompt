@@ -84,6 +84,14 @@ private struct ScriptTab: View {
                         .help("Delete script")
                         .disabled(settings.scripts.count < 2)
                     Spacer()
+                    Button {
+                        for file in ScriptImporter.chooseFiles() {
+                            settings.addScript(title: file.title, body: file.text)
+                        }
+                    } label: {
+                        Label("Import", systemImage: "square.and.arrow.down")
+                    }
+                    .help("Import .txt, .md, .rtf, .docx, or PowerPoint speaker notes (.pptx)")
                 }
                 .buttonStyle(.borderless)
                 .padding(6)
