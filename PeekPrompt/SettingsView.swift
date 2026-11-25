@@ -174,7 +174,8 @@ private struct ScriptTab: View {
                     .font(.caption)
                 }
 
-                HStack {
+                // Row 1: actions
+                HStack(spacing: 8) {
                     Button {
                         dictation.toggle()
                     } label: {
@@ -182,16 +183,29 @@ private struct ScriptTab: View {
                               systemImage: dictation.isDictating ? "stop.circle.fill" : "mic")
                     }
                     .tint(dictation.isDictating ? .red : nil)
+                    .fixedSize()
                     .help("Speak and your words are added to the end of the script")
+
                     Button {
                         isPolishing = true
                     } label: {
                         Label("Magic Polish", systemImage: "wand.and.stars")
                     }
+                    .fixedSize()
                     .help("Rewrite this script so it's easier to say out loud")
+
+                    Spacer(minLength: 0)
+                }
+
+                // Row 2: info
+                HStack(spacing: 8) {
                     Text("\(settings.wordCount) words · about \(readingTime) to read")
-                    Spacer()
+                        .lineLimit(1)
+                    Spacer(minLength: 8)
                     Text("[cues] in brackets are dimmed")
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .layoutPriority(-1)
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
