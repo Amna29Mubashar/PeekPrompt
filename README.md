@@ -88,6 +88,8 @@ By default it sits right under the camera for the best eye contact. To put it so
 2. Scan the QR code with your phone's camera. Your phone must be on the **same Wi-Fi** as your Mac.
 3. You get big buttons for play/pause, restart, back/ahead, slower/faster, mode, mute and show/hide, plus a progress bar.
 
+<p align="center"><img src="docs/phone-remote.png" width="300" alt="PeekPrompt phone remote in a mobile browser"></p>
+
 The link contains a secret code that changes every time you turn the remote on, so nobody else on the network can control your prompter. macOS may ask to let PeekPrompt find devices on your local network; allow it.
 
 ### Hiding it from recordings
