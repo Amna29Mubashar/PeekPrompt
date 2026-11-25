@@ -6,7 +6,7 @@
 
 A teleprompter that lives in your MacBook's notch, right under the camera, so you look straight at your audience while you read.
 
-<p align="center"><img src="docs/demo.gif" width="640" alt="PeekPrompt counting down, highlighting the current line and scrolling under the notch"></p>
+<p align="center"><img src="docs/demo.gif" width="640" alt="PeekPrompt counting down, then scrolling as you speak with a voice-reactive glow"></p>
 
 ## Features
 
