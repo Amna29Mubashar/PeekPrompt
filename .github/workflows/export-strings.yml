@@ -1,0 +1,23 @@
+name: Export strings
+
+# Run by hand (Actions tab → Export strings → Run workflow) to get every
+# translatable string in the app, the same way Xcode's "Export Localizations" does.
+on:
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export localizations
+        run: |
+          xcodebuild -exportLocalizations \
+            -project PeekPrompt.xcodeproj \
+            -localizationPath exported \
+            -exportLanguage en \
+            CODE_SIGNING_ALLOWED=NO
+      - uses: actions/upload-artifact@v4
+        with:
+          name: strings
+          path: exported
