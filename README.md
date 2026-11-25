@@ -48,7 +48,7 @@ After launch, PeekPrompt slides down from your notch with a sample script. There
 - There's also a menu bar icon, but on crowded MacBook menu bars macOS may hide it behind the notch.
 
 ### Writing and managing scripts
-<p align="center"><img src="docs/screens/script.png" width="560" alt="Script tab with the script library, editor and Import button"></p>
+<p align="center"><img src="docs/screens/script.png" width="560" alt="Script tab with folders, the script library, Folder menu, editor, Dictate and Magic Polish"></p>
 
 Open **Settings → Script**.
 - The list on the left is your **script library**. Click **+** to add a script, **−** to delete one, or right-click a script to duplicate it.
@@ -73,7 +73,7 @@ Click **Import** at the bottom of the script list and pick one or more files:
 Each file becomes a new script named after the file.
 
 ### Choosing how it scrolls
-<p align="center"><img src="docs/screens/modes.png" width="560" alt="Scrolling mode picker: Classic, Voice-Activated, Word Tracking"></p>
+<p align="center"><img src="docs/screens/modes.png" width="560" alt="Scrolling mode picker: Classic, Voice-Activated and Word Tracking"></p>
 
 Open **Settings → Scrolling**, or click the mode button in the hover controls to cycle through the modes.
 
@@ -90,22 +90,25 @@ Open **Settings → Scrolling**, or click the mode button in the hover controls 
 **Word Tracking** uses Apple's speech recognition. When your Mac supports it, it runs entirely on-device. The first time, macOS asks for permission.
 
 ### Presenting slides and memorizing
+<p align="center"><img src="docs/screens/presenting.png" width="560" alt="Presentation mode and Memorize mode settings"></p>
+
 In **Settings → Scrolling → Presenting & practice**:
 - **Presentation mode** shows one slide at a time. Slides are separated by a `[Slide 1]` line, added automatically when you import a PowerPoint, or by a line with just `---`. Move between slides with **⌃⌥→ / ⌃⌥←**, the arrows in the hover controls, the phone remote, or Siri ("Next slide in PeekPrompt"). The area beside the notch shows "Slide 2/8".
 - **Memorize mode** shows one paragraph at a time and hides words: some, most, or all but first letters. Raise the level as you learn the script. In Word Tracking mode, hidden words reappear as you say them.
 
 ### Before you start: countdown and pacing
-<p align="center"><img src="docs/screens/speed.png" width="560" alt="Scroll speed, auto speed, pause on hover, target length and countdown settings"></p>
+<p align="center"><img src="docs/screens/speed.png" width="560" alt="Scroll speed, auto speed, pause on hover, target length, end-of-script and countdown settings"></p>
 
 - **Countdown:** pressing Play from the top shows 3… 2… 1… first, so you have time to look at the camera. Change it to 5 or 10 seconds, or turn it off, in Settings → Scrolling.
 - **Pacing timer:** set a **Target length**, for example 2 min. The area to the right of the notch then shows elapsed time against your target, and whether you're **on time** (green), **behind** (orange) or **ahead** (blue).
 
 ### Making it comfortable to read
-<p align="center"><img src="docs/screens/fonts.png" width="560" alt="Font menu showing Rounded, Standard, Serif, Monospaced and OpenDyslexic"></p>
+<p align="center"><img src="docs/screens/text.png" width="560" alt="Text settings: font, theme, background opacity, font size, line spacing and reading-line highlight"></p>
 
 Open **Settings → Appearance**.
 - **Font:** Rounded, Standard, Serif, Monospaced, or **OpenDyslexic**, which is designed for readers with dyslexia.
 - **Theme:** Dark or Light.
+- **Background opacity:** lower it to see what's behind the prompter.
 - **Font size, line spacing, width and height.**
 - **Highlight the line you're reading:** the current line is full brightness and the rest is dimmed, so your eyes don't wander.
 
