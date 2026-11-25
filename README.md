@@ -7,13 +7,21 @@ A teleprompter that lives in your MacBook's notch, right under the camera, so yo
 ## Features
 
 - **Sits under the notch.** It tucks into the notch with the same curved "ears", and slides down when shown.
-- **Two scrolling modes**
+- **Three scrolling modes**
   - **Classic:** scrolls at a steady speed you choose.
-  - **Voice-Activated:** scrolls only while you're speaking, and pauses when you go quiet or mute the mic.
+  - **Voice-Activated:** scrolls only while you're speaking, and pauses when you go quiet or mute the mic. Turn on **Auto speed** and it matches how fast you talk.
+  - **Word Tracking:** listens to the words you say and follows along, even if you skip ahead. Words you've read fade back. Uses Apple's speech recognition, on-device when your Mac supports it.
 - **Voice-reactive glowing border.** A rotating gradient outline that brightens and thickens as you talk. Four color palettes.
 - **Hidden from screen sharing.** It stays out of Zoom, Meet, Teams, QuickTime and screenshots (see the note on Loom below).
 - **Put it anywhere.** Prefer it somewhere else? Switch Position to "Anywhere" and drag it. It becomes a rounded card and remembers where you left it.
 - **Right-click menu** for play, restart, position, hide, Settings and Quit.
+- **Script library.** Save as many scripts as you like and switch from the right-click menu.
+- **Import** .txt, .md, .rtf, Word (.docx) files, or the **speaker notes from a PowerPoint** (.pptx).
+- **3-2-1 countdown** before you start.
+- **Pacing timer.** Set a target length and see whether you're ahead or behind.
+- **Reading-line highlight.** The line you're reading is bright, and the rest is dimmed.
+- **Fonts and themes.** Rounded, standard, serif, monospaced or **OpenDyslexic**, in dark or light.
+- **Phone remote.** Scan a QR code and control play, speed and more from your phone's browser (same Wi-Fi). No app needed.
 - **Hover to pause**, and scroll with your trackpad to jump around.
 - **Cues.** Anything in `[square brackets]` is dimmed and italic, so you know not to read it aloud.
 - **Global shortcuts** that work from any app.
@@ -67,6 +75,14 @@ xcodegen generate
 | `SettingsView.swift` | The Settings window |
 | `PrompterSettings.swift` | All settings, saved automatically |
 | `GlobalHotKeys.swift` | Shortcuts that work in any app |
+| `SpeechTracker.swift` | Word Tracking and Auto speed (speech recognition and matching) |
+| `ScriptImporter.swift`, `ZipReader.swift` | Importing documents and PowerPoint notes |
+| `RemoteServer.swift` | The phone remote web page and server |
+| `Typography.swift` | Fonts and themes |
+
+## Fonts
+
+OpenDyslexic is bundled under the SIL Open Font License (see `PeekPrompt/Fonts/OpenDyslexic-OFL.txt`).
 
 ## Credits
 
