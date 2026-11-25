@@ -19,12 +19,19 @@ A teleprompter that lives in your MacBook's notch, right under the camera, so yo
 - **Hidden from screen sharing.** It stays out of Zoom, Meet, Teams, QuickTime and screenshots (see the note on Loom below).
 - **Put it anywhere.** Prefer it somewhere else? Switch Position to "Anywhere" and drag it. It becomes a rounded card and remembers where you left it.
 - **Right-click menu** for play, restart, position, hide, Settings and Quit.
-- **Script library.** Save as many scripts as you like and switch from the right-click menu.
-- **Import** .txt, .md, .rtf, Word (.docx) files, or the **speaker notes from a PowerPoint** (.pptx).
+- **Script library with folders.** Drag scripts into any order. That order is also the play queue.
+- **End of script:** stop, start over, or move straight on to the next script.
+- **Presentation mode.** One slide at a time. PowerPoint speaker notes import slide by slide, and you switch slides with a shortcut, the hover buttons, your phone or Siri.
+- **Memorize mode.** Practice a paragraph at a time while words are gradually hidden, down to first letters only.
+- **Magic Polish.** Rewrite rough notes into a natural, spoken-style script with Apple Intelligence, on your Mac.
+- **Dictation.** Speak your script and it's typed for you.
+- **Import** .txt, .md, .rtf, Word (.docx), **PDF**, or the **speaker notes from a PowerPoint** (.pptx).
 - **3-2-1 countdown** before you start.
 - **Pacing timer.** Set a target length and see whether you're ahead or behind.
 - **Reading-line highlight.** The line you're reading is bright, and the rest is dimmed.
-- **Fonts and themes.** Rounded, standard, serif, monospaced or **OpenDyslexic**, in dark or light.
+- **Fonts and themes.** Rounded, standard, serif, monospaced or **OpenDyslexic**, in dark or light, with adjustable background opacity.
+- **Hands-free start.** Press ⇧⌘Space, or say "Hey Siri, start PeekPrompt". Also available in the Shortcuts app.
+- **10 languages:** English, Spanish, French, German, Italian, Portuguese (Brazil), Japanese, Korean, Chinese (Simplified) and Arabic.
 - **Phone remote.** Scan a QR code and control play, speed and more from your phone's browser (same Wi-Fi). No app needed.
 - **Hover to pause**, and scroll with your trackpad to jump around.
 - **Cues.** Anything in `[square brackets]` is dimmed and italic, so you know not to read it aloud.
@@ -50,9 +57,17 @@ Open **Settings → Script**.
 - The footer shows the word count and roughly how long the script takes to read, at about 150 words per minute.
 - Switch scripts any time by right-clicking the prompter → **Script**.
 
+### Dictation and Magic Polish
+- **Dictate:** click **Dictate** under the editor and start talking. Your words are added to the end of the script. Click **Stop Dictating** when you're done.
+- **Magic Polish:** click **Magic Polish** to rewrite the script so it's easier to say out loud. You can make it sound natural, make it shorter, or turn rough notes into a script. Nothing changes until you choose **Replace Script** or **Save as New Script**. On Macs with Apple Intelligence (macOS 26 or later) the rewrite runs on-device. On other Macs, a basic cleanup removes formatting and spells out shorthand like "e.g." and "%".
+
+### Folders and the play queue
+Click **+** → **New Folder…** to group scripts. Right-click a script → **Move to Folder**, and drag scripts to reorder them. The order in the list is the play queue: set **Settings → Scrolling → At the end of a script** to **Play the next script** to read several scripts back to back.
+
 ### Importing a script
 Click **Import** at the bottom of the script list and pick one or more files:
 - **Text and Markdown** (.txt, .md), **Rich Text** (.rtf), **Word** (.docx, .doc), **OpenDocument** (.odt) or **web pages** (.html)
+- **PDF** (.pdf): the text of every page
 - **PowerPoint** (.pptx): PeekPrompt pulls out the **speaker notes** for each slide, in order, with a `[Slide N]` cue between them. If a slide has no notes, it uses the text on the slide.
 
 Each file becomes a new script named after the file.
@@ -73,6 +88,11 @@ Open **Settings → Scrolling**, or click the mode button in the hover controls 
 **Tuning voice detection:** in Settings → Scrolling, watch the live mic bar while you talk. It should cross the white line when you speak and stay below it when you're silent. If it doesn't, move **Sensitivity** toward Whisper or Loud.
 
 **Word Tracking** uses Apple's speech recognition. When your Mac supports it, it runs entirely on-device. The first time, macOS asks for permission.
+
+### Presenting slides and memorizing
+In **Settings → Scrolling → Presenting & practice**:
+- **Presentation mode** shows one slide at a time. Slides are separated by a `[Slide 1]` line, added automatically when you import a PowerPoint, or by a line with just `---`. Move between slides with **⌃⌥→ / ⌃⌥←**, the arrows in the hover controls, the phone remote, or Siri ("Next slide in PeekPrompt"). The area beside the notch shows "Slide 2/8".
+- **Memorize mode** shows one paragraph at a time and hides words: some, most, or all but first letters. Raise the level as you learn the script. In Word Tracking mode, hidden words reappear as you say them.
 
 ### Before you start: countdown and pacing
 <p align="center"><img src="docs/screens/speed.png" width="560" alt="Scroll speed, auto speed, pause on hover, target length and countdown settings"></p>
@@ -125,6 +145,8 @@ The link contains a secret code that changes every time you turn the remote on, 
 | ⌃⌥R | Restart from top |
 | ⌃⌥M | Mute / unmute mic |
 | ⌃⌥↑ / ⌃⌥↓ | Faster / slower |
+| ⌃⌥→ / ⌃⌥← | Next / previous slide or chunk |
+| ⇧⌘Space | Start / pause (hands-free) |
 
 ## A note on Loom and other recorders
 
@@ -153,6 +175,11 @@ xcodegen generate
 
 | File | What it does |
 |---|---|
+| `Segments.swift` | Splitting scripts into slides and memorize chunks |
+| `MagicPolish.swift` | Magic Polish (Apple Intelligence rewrite and fallback) |
+| `Dictation.swift` | Speak-to-type in the script editor |
+| `AppIntents.swift` | Siri and Shortcuts actions |
+| `*.xcstrings` | Translations for 10 languages |
 | `PeekPromptApp.swift` | App entry, menu bar menu, global shortcuts setup |
 | `PrompterWindowController.swift` | The floating notch window: position, slide animation, capture hiding |
 | `PrompterView.swift` | What you see: the script, fades, progress, hover controls |

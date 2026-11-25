@@ -29,3 +29,6 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build | tee build.log | grep -E "error:|warning:|BUILD (SUCCEEDED|FAILED)" || true
           grep -q "BUILD SUCCEEDED" build.log
+
+      - name: List app languages
+        run: ls build/Debug/PeekPrompt.app/Contents/Resources | grep lproj || true
