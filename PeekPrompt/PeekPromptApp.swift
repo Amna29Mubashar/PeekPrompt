@@ -100,19 +100,19 @@ struct MenuContent: View {
     @ObservedObject var mic: MicrophoneMonitor
 
     var body: some View {
-        Button(settings.isPrompterVisible ? "Hide Prompter" : "Show Prompter") {
+        Button(settings.isPrompterVisible ? String(localized: "Hide Prompter") : String(localized: "Show Prompter")) {
             settings.isPrompterVisible.toggle()
         }
 
         Divider()
 
-        Button(engine.isRunning ? "Pause" : (settings.mode.usesMicrophone ? "Start Listening" : "Play")) {
+        Button(engine.isRunning ? String(localized: "Pause") : (settings.mode.usesMicrophone ? String(localized: "Start Listening") : String(localized: "Play"))) {
             engine.toggle()
         }
         Button("Restart from Top") { engine.restart() }
 
         if settings.mode.usesMicrophone {
-            Button(mic.isMuted ? "Unmute Microphone" : "Mute Microphone") { mic.isMuted.toggle() }
+            Button(mic.isMuted ? String(localized: "Unmute Microphone") : String(localized: "Mute Microphone")) { mic.isMuted.toggle() }
         }
 
         Picker("Script", selection: Binding(

@@ -66,16 +66,16 @@ struct PrompterView: View {
         .animation(.easeInOut(duration: 0.2), value: engine.countdown == nil)
         .preferredColorScheme(settings.theme.colorScheme)
         .contextMenu {
-            Button(engine.isRunning ? "Pause" : "Play") { engine.toggle() }
+            Button(engine.isRunning ? String(localized: "Pause") : String(localized: "Play")) { engine.toggle() }
             Button("Restart from Top") { engine.restart() }
             Divider()
-            Button(settings.placement == .notch ? "Move Anywhere (drag to place)" : "Move Back Under Notch") {
+            Button(settings.placement == .notch ? String(localized: "Move Anywhere (drag to place)") : String(localized: "Move Back Under Notch")) {
                 settings.placement = settings.placement == .notch ? .floating : .notch
             }
             if engine.isSegmented {
-                Button("Next \(settings.presentationMode ? "Slide" : "Chunk")") { engine.nextSegment() }
+                Button(settings.presentationMode ? String(localized: "Next Slide") : String(localized: "Next Chunk")) { engine.nextSegment() }
                     .disabled(engine.isOnLastSegment)
-                Button("Previous \(settings.presentationMode ? "Slide" : "Chunk")") { engine.previousSegment() }
+                Button(settings.presentationMode ? String(localized: "Previous Slide") : String(localized: "Previous Chunk")) { engine.previousSegment() }
                     .disabled(engine.segmentIndex == 0)
             }
             Toggle("Presentation Mode", isOn: $settings.presentationMode)
@@ -305,32 +305,32 @@ struct HoverControls: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            control("backward.end.fill", help: "Restart") { engine.restart() }
+            control("backward.end.fill", help: String(localized: "Restart")) { engine.restart() }
 
             if engine.isSegmented {
-                control("chevron.left", help: "Previous") { engine.previousSegment() }
-                control("chevron.right", help: "Next") { engine.nextSegment() }
+                control("chevron.left", help: String(localized: "Previous")) { engine.previousSegment() }
+                control("chevron.right", help: String(localized: "Next")) { engine.nextSegment() }
             }
 
-            control("minus", help: "Slower") { engine.changeSpeed(by: -5) }
+            control("minus", help: String(localized: "Slower")) { engine.changeSpeed(by: -5) }
 
-            control(playSymbol, help: engine.isRunning ? "Pause" : "Play", size: 15) { engine.toggle() }
+            control(playSymbol, help: engine.isRunning ? String(localized: "Pause") : String(localized: "Play"), size: 15) { engine.toggle() }
 
-            control("plus", help: "Faster") { engine.changeSpeed(by: 5) }
+            control("plus", help: String(localized: "Faster")) { engine.changeSpeed(by: 5) }
 
             if settings.mode.usesMicrophone {
                 control(mic.isMuted ? "mic.slash.fill" : "mic.fill",
-                        help: mic.isMuted ? "Unmute" : "Mute",
+                        help: mic.isMuted ? String(localized: "Unmute") : String(localized: "Mute"),
                         tint: mic.isMuted ? .red : .white) {
                     mic.isMuted.toggle()
                 }
             }
 
-            control(nextMode.symbol, help: "Switch to \(nextMode.title)") {
+            control(nextMode.symbol, help: String(localized: "Switch to \(nextMode.title)")) {
                 settings.mode = nextMode
             }
 
-            control("gearshape.fill", help: "Settings") {
+            control("gearshape.fill", help: String(localized: "Settings")) {
                 NSApp.activate()
                 openSettings()
             }
@@ -397,10 +397,10 @@ struct PaceLabel: View {
     }
 
     private func deltaText(_ delta: TimeInterval) -> String {
-        if abs(delta) < 5 { return "on time" }
+        if abs(delta) < 5 { return String(localized: "on time") }
         let seconds = Int(abs(delta).rounded())
         let amount = seconds >= 60 ? format(TimeInterval(seconds)) : "\(seconds)s"
-        return delta > 0 ? "\(amount) ahead" : "\(amount) behind"
+        return delta > 0 ? String(localized: "\(amount) ahead") : String(localized: "\(amount) behind")
     }
 
     private func color(for delta: TimeInterval) -> Color {

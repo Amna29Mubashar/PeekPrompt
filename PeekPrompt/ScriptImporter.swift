@@ -14,8 +14,8 @@ enum ScriptImporter {
 
         var errorDescription: String? {
             switch self {
-            case .unreadable(let name): return "PeekPrompt couldn't read \(name)."
-            case .empty: return "That file doesn't contain any text to read."
+            case .unreadable(let name): return String(localized: "PeekPrompt couldn't read \(name).")
+            case .empty: return String(localized: "That file doesn't contain any text to read.")
             }
         }
     }
@@ -29,8 +29,8 @@ enum ScriptImporter {
     /// Shows an Open dialog. Returns (title, text) for each file the user picked.
     static func chooseFiles() -> [(title: String, text: String)] {
         let panel = NSOpenPanel()
-        panel.title = "Import Script"
-        panel.prompt = "Import"
+        panel.title = String(localized: "Import Script")
+        panel.prompt = String(localized: "Import")
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
         panel.allowedContentTypes = allowedContentTypes
@@ -48,7 +48,7 @@ enum ScriptImporter {
         }
         if !failures.isEmpty {
             let alert = NSAlert()
-            alert.messageText = "Some files couldn't be imported"
+            alert.messageText = String(localized: "Some files couldn't be imported")
             alert.informativeText = failures.joined(separator: "\n")
             alert.runModal()
         }

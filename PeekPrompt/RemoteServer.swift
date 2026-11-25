@@ -42,7 +42,7 @@ final class RemoteServer: ObservableObject {
             listener.start(queue: queue)
             self.listener = listener
         } catch {
-            errorMessage = "Couldn't start the remote: \(error.localizedDescription)"
+            errorMessage = String(localized: "Couldn't start the remote: \(error.localizedDescription)")
         }
     }
 
@@ -62,10 +62,10 @@ final class RemoteServer: ObservableObject {
                 address = URL(string: "http://\(ip):\(port)/?k=\(key)")
             } else {
                 address = nil
-                errorMessage = "Your Mac doesn't seem to be on a Wi-Fi or wired network."
+                errorMessage = String(localized: "Your Mac doesn't seem to be on a Wi-Fi or wired network.")
             }
         case .failed(let error):
-            errorMessage = "The remote stopped: \(error.localizedDescription)"
+            errorMessage = String(localized: "The remote stopped: \(error.localizedDescription)")
             stop()
         case .cancelled:
             isRunning = false

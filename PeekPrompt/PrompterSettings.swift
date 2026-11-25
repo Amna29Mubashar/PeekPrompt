@@ -11,9 +11,9 @@ enum ScrollMode: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .classic: return "Classic"
-        case .voiceActivated: return "Voice-Activated"
-        case .wordTracking: return "Word Tracking"
+        case .classic: return String(localized: "Classic")
+        case .voiceActivated: return String(localized: "Voice-Activated")
+        case .wordTracking: return String(localized: "Word Tracking")
         }
     }
 
@@ -22,9 +22,9 @@ enum ScrollMode: String, CaseIterable, Identifiable {
 
     var detail: String {
         switch self {
-        case .classic: return "Scrolls at a steady speed you choose."
-        case .voiceActivated: return "Scrolls while you speak. Pauses when you go quiet or mute."
-        case .wordTracking: return "Listens to the words you say and follows along, even if you skip ahead. Uses Apple's speech recognition, on your Mac when supported."
+        case .classic: return String(localized: "Scrolls at a steady speed you choose.")
+        case .voiceActivated: return String(localized: "Scrolls while you speak. Pauses when you go quiet or mute.")
+        case .wordTracking: return String(localized: "Listens to the words you say and follows along, even if you skip ahead. Uses Apple's speech recognition, on your Mac when supported.")
         }
     }
 
@@ -46,8 +46,8 @@ enum PrompterPlacement: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .notch: return "Under the notch"
-        case .floating: return "Anywhere"
+        case .notch: return String(localized: "Under the notch")
+        case .floating: return String(localized: "Anywhere")
         }
     }
 }
@@ -60,9 +60,9 @@ enum EndAction: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .stop: return "Stop"
-        case .loop: return "Start over"
-        case .next: return "Play the next script"
+        case .stop: return String(localized: "Stop")
+        case .loop: return String(localized: "Start over")
+        case .next: return String(localized: "Play the next script")
         }
     }
 }
@@ -72,7 +72,14 @@ enum GlowPalette: String, CaseIterable, Identifiable {
     case aurora, sunset, ocean, mono
 
     var id: String { rawValue }
-    var title: String { rawValue.capitalized }
+    var title: String {
+        switch self {
+        case .aurora: return String(localized: "Aurora")
+        case .sunset: return String(localized: "Sunset")
+        case .ocean: return String(localized: "Ocean")
+        case .mono: return String(localized: "Mono")
+        }
+    }
 
     var colors: [Color] {
         switch self {
@@ -151,7 +158,7 @@ final class PrompterSettings: ObservableObject {
     }
 
     var currentTitle: String {
-        scripts.first(where: { $0.id == currentScriptID })?.title ?? "Untitled"
+        scripts.first(where: { $0.id == currentScriptID })?.title ?? String(localized: "Untitled")
     }
 
     func selectScript(_ id: UUID) {
@@ -161,7 +168,7 @@ final class PrompterSettings: ObservableObject {
     }
 
     @discardableResult
-    func addScript(title: String = "Untitled Script", body: String = "", folder: String? = nil) -> UUID {
+    func addScript(title: String = String(localized: "Untitled Script"), body: String = "", folder: String? = nil) -> UUID {
         let new = Script(title: title, body: body, folder: folder)
         scripts.append(new)
         selectScript(new.id)
@@ -230,7 +237,7 @@ final class PrompterSettings: ObservableObject {
 
     func duplicateScript(_ id: UUID) {
         guard let original = scripts.first(where: { $0.id == id }) else { return }
-        addScript(title: original.title + " copy", body: original.body, folder: original.folder)
+        addScript(title: String(localized: "\(original.title) copy"), body: original.body, folder: original.folder)
     }
 
     func renameScript(_ id: UUID, to title: String) {
@@ -334,7 +341,7 @@ final class PrompterSettings: ObservableObject {
         }
         if loaded.isEmpty {
             let existing = d.string(forKey: Key.script)
-            loaded = [Script(title: existing == nil ? "Welcome" : "My Script",
+            loaded = [Script(title: existing == nil ? String(localized: "Welcome") : String(localized: "My Script"),
                              body: existing ?? PrompterSettings.sampleScript)]
         }
         scripts = loaded

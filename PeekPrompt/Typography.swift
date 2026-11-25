@@ -9,10 +9,10 @@ enum PrompterFont: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .rounded: return "Rounded"
-        case .system: return "Standard"
-        case .serif: return "Serif"
-        case .mono: return "Monospaced"
+        case .rounded: return String(localized: "Rounded")
+        case .system: return String(localized: "Standard")
+        case .serif: return String(localized: "Serif")
+        case .mono: return String(localized: "Monospaced")
         case .dyslexic: return "OpenDyslexic"
         }
     }
@@ -37,7 +37,7 @@ enum PrompterTheme: String, CaseIterable, Identifiable {
     case dark, light
 
     var id: String { rawValue }
-    var title: String { rawValue.capitalized }
+    var title: String { self == .dark ? String(localized: "Dark") : String(localized: "Light") }
 
     var background: Color { self == .dark ? .black : Color(white: 0.97) }
     var text: Color { self == .dark ? .white : Color(white: 0.08) }

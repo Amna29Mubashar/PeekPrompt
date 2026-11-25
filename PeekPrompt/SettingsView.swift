@@ -24,7 +24,7 @@ struct SettingsView: View {
 
             Divider()
             HStack {
-                Button(settings.isPrompterVisible ? "Hide Prompter" : "Show Prompter") {
+                Button(settings.isPrompterVisible ? String(localized: "Hide Prompter") : String(localized: "Show Prompter")) {
                     settings.isPrompterVisible.toggle()
                 }
                 Spacer()
@@ -89,7 +89,7 @@ private struct ScriptTab: View {
                         }
                     }
 
-                    Section(settings.folderNames.isEmpty ? "" : "Other Scripts") {
+                    Section(settings.folderNames.isEmpty ? "" : String(localized: "Other Scripts")) {
                         scriptRows(inFolder: nil)
                     }
                 }
@@ -178,7 +178,7 @@ private struct ScriptTab: View {
                     Button {
                         dictation.toggle()
                     } label: {
-                        Label(dictation.isDictating ? "Stop Dictating" : "Dictate",
+                        Label(dictation.isDictating ? String(localized: "Stop Dictating") : String(localized: "Dictate"),
                               systemImage: dictation.isDictating ? "stop.circle.fill" : "mic")
                     }
                     .tint(dictation.isDictating ? .red : nil)
@@ -217,7 +217,7 @@ private struct ScriptTab: View {
     @ViewBuilder
     private func scriptRows(inFolder folder: String?) -> some View {
         ForEach(settings.scripts(inFolder: folder)) { script in
-            Text(script.title.isEmpty ? "Untitled" : script.title)
+            Text(script.title.isEmpty ? String(localized: "Untitled") : script.title)
                 .lineLimit(1)
                 .tag(script.id)
                 .contextMenu {
@@ -242,7 +242,9 @@ private struct ScriptTab: View {
     /// Average speaking pace is roughly 150 words per minute.
     private var readingTime: String {
         let seconds = Int((Double(settings.wordCount) / 150.0 * 60).rounded())
-        return seconds < 60 ? "\(seconds) sec" : "\(seconds / 60) min \(seconds % 60) sec"
+        return seconds < 60
+            ? String(localized: "\(seconds) sec")
+            : String(localized: "\(seconds / 60) min \(seconds % 60) sec")
     }
 }
 
@@ -355,17 +357,17 @@ private struct ScrollingTab: View {
 
     private var autoSpeedCaption: String {
         if let wpm = tracker.wordsPerMinute {
-            return "You're speaking at about \(Int(wpm)) words per minute. The slider is used until PeekPrompt has heard a few seconds of you."
+            return String(localized: "You're speaking at about \(Int(wpm)) words per minute. The slider is used until PeekPrompt has heard a few seconds of you.")
         }
-        return "Start reading in Voice-Activated mode. After a few seconds, PeekPrompt measures your pace and takes over from the speed slider."
+        return String(localized: "Start reading in Voice-Activated mode. After a few seconds, PeekPrompt measures your pace and takes over from the speed slider.")
     }
 
     private var meterCaption: String {
-        if mic.permissionDenied { return "PeekPrompt doesn't have microphone access." }
-        if !mic.isRunning { return "Microphone is off." }
+        if mic.permissionDenied { return String(localized: "PeekPrompt doesn't have microphone access.") }
+        if !mic.isRunning { return String(localized: "Microphone is off.") }
         return mic.isSpeaking
-            ? "Hearing you. Text will move."
-            : "Talk normally: the bar should cross the white line when you speak, but not when you're quiet."
+            ? String(localized: "Hearing you. Text will move.")
+            : String(localized: "Talk normally: the bar should cross the white line when you speak, but not when you're quiet.")
     }
 }
 
@@ -477,7 +479,7 @@ private struct AppearanceTab: View {
 }
 
 private struct LabeledSlider: View {
-    let title: String
+    let title: LocalizedStringKey
     @Binding var value: Double
     let range: ClosedRange<Double>
     let unit: String
@@ -486,7 +488,7 @@ private struct LabeledSlider: View {
         HStack {
             Text(title)
             Slider(value: $value, in: range)
-            Text("\(Int(value)) \(unit)")
+            Text(verbatim: "\(Int(value)) \(unit)")
                 .monospacedDigit()
                 .foregroundStyle(.secondary)
                 .frame(width: 56, alignment: .trailing)
@@ -583,7 +585,7 @@ private struct PrivacyTab: View {
 
 private struct ShortcutRow: View {
     let keys: String
-    let action: String
+    let action: LocalizedStringKey
 
     var body: some View {
         HStack {

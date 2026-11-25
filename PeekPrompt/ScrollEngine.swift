@@ -35,7 +35,7 @@ final class ScrollEngine: ObservableObject {
     /// e.g. "Slide 2/8" or "Chunk 3/12".
     var segmentLabel: String? {
         guard isSegmented else { return nil }
-        let kind = settings.presentationMode ? "Slide" : "Chunk"
+        let kind = settings.presentationMode ? String(localized: "Slide") : String(localized: "Chunk")
         return "\(kind) \(segmentIndex + 1)/\(segments.count)"
     }
 

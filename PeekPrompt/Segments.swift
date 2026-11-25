@@ -80,10 +80,10 @@ enum MemorizeLevel: Int, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .showAll: return "Show everything"
-        case .hideSome: return "Hide some words"
-        case .hideMost: return "Hide most words"
-        case .firstLetters: return "First letters only"
+        case .showAll: return String(localized: "Show everything")
+        case .hideSome: return String(localized: "Hide some words")
+        case .hideMost: return String(localized: "Hide most words")
+        case .firstLetters: return String(localized: "First letters only")
         }
     }
 

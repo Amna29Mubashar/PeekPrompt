@@ -34,13 +34,13 @@ final class Dictation: ObservableObject {
             DispatchQueue.main.async {
                 guard let self else { return }
                 guard status == .authorized else {
-                    self.errorMessage = "Speech recognition is turned off for PeekPrompt in System Settings → Privacy & Security."
+                    self.errorMessage = String(localized: "Speech recognition is turned off for PeekPrompt in System Settings → Privacy & Security.")
                     return
                 }
                 AVCaptureDevice.requestAccess(for: .audio) { granted in
                     DispatchQueue.main.async {
                         if granted { self.beginAudio() } else {
-                            self.errorMessage = "PeekPrompt doesn't have microphone access."
+                            self.errorMessage = String(localized: "PeekPrompt doesn't have microphone access.")
                         }
                     }
                 }
@@ -63,7 +63,7 @@ final class Dictation: ObservableObject {
         let input = engine.inputNode
         let format = input.outputFormat(forBus: 0)
         guard format.sampleRate > 0 else {
-            errorMessage = "No microphone found."
+            errorMessage = String(localized: "No microphone found.")
             return
         }
         input.removeTap(onBus: 0)
@@ -76,7 +76,7 @@ final class Dictation: ObservableObject {
             try engine.start()
         } catch {
             input.removeTap(onBus: 0)
-            errorMessage = "Couldn't start the microphone."
+            errorMessage = String(localized: "Couldn't start the microphone.")
             return
         }
         isDictating = true
@@ -87,7 +87,7 @@ final class Dictation: ObservableObject {
         guard isDictating else { return }
         guard let recognizer = SFSpeechRecognizer(locale: Locale.current) ?? SFSpeechRecognizer(locale: Locale(identifier: "en-US")),
               recognizer.isAvailable else {
-            errorMessage = "Speech recognition isn't available right now."
+            errorMessage = String(localized: "Speech recognition isn't available right now.")
             stop()
             return
         }

@@ -73,7 +73,7 @@ final class SpeechTracker: ObservableObject {
                     self.mic.start()
                     self.beginSession()
                 } else {
-                    self.errorMessage = "Speech recognition is turned off for PeekPrompt in System Settings → Privacy & Security."
+                    self.errorMessage = String(localized: "Speech recognition is turned off for PeekPrompt in System Settings → Privacy & Security.")
                 }
             }
         }
@@ -92,7 +92,7 @@ final class SpeechTracker: ObservableObject {
         endSession()
         let recognizer = SFSpeechRecognizer(locale: Locale.current) ?? SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
         guard let recognizer, recognizer.isAvailable else {
-            errorMessage = "Speech recognition isn't available right now."
+            errorMessage = String(localized: "Speech recognition isn't available right now.")
             return
         }
         self.recognizer = recognizer

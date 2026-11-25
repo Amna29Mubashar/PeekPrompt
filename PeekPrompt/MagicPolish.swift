@@ -11,9 +11,9 @@ enum PolishStyle: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .natural: return "Make it sound natural"
-        case .shorter: return "Make it shorter"
-        case .fromNotes: return "Turn notes into a script"
+        case .natural: return String(localized: "Make it sound natural")
+        case .shorter: return String(localized: "Make it shorter")
+        case .fromNotes: return String(localized: "Turn notes into a script")
         }
     }
 
@@ -49,17 +49,17 @@ enum MagicPolish {
             case .available:
                 return nil
             case .unavailable(.appleIntelligenceNotEnabled):
-                return "Turn on Apple Intelligence in System Settings to get AI rewriting. Using basic cleanup for now."
+                return String(localized: "Turn on Apple Intelligence in System Settings to get AI rewriting. Using basic cleanup for now.")
             case .unavailable(.modelNotReady):
-                return "Apple Intelligence is still getting ready (downloading). Using basic cleanup for now."
+                return String(localized: "Apple Intelligence is still getting ready (downloading). Using basic cleanup for now.")
             case .unavailable(.deviceNotEligible):
-                return "This Mac doesn't support Apple Intelligence. Using basic cleanup instead."
+                return String(localized: "This Mac doesn't support Apple Intelligence. Using basic cleanup instead.")
             case .unavailable:
-                return "Apple Intelligence isn't available right now. Using basic cleanup instead."
+                return String(localized: "Apple Intelligence isn't available right now. Using basic cleanup instead.")
             }
         }
         #endif
-        return "AI rewriting needs macOS 26 with Apple Intelligence. Using basic cleanup instead."
+        return String(localized: "AI rewriting needs macOS 26 with Apple Intelligence. Using basic cleanup instead.")
     }
 
     static func polish(_ text: String, style: PolishStyle, addPauses: Bool,
@@ -187,7 +187,7 @@ struct MagicPolishSheet: View {
                 Label("Magic Polish", systemImage: "wand.and.stars")
                     .font(.title3.weight(.semibold))
                 Spacer()
-                Text(MagicPolish.usesAppleIntelligence ? "Apple Intelligence · on this Mac" : "Basic cleanup")
+                Text(MagicPolish.usesAppleIntelligence ? String(localized: "Apple Intelligence · on this Mac") : String(localized: "Basic cleanup"))
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
@@ -269,7 +269,7 @@ struct MagicPolishSheet: View {
                 }
             } catch {
                 await MainActor.run {
-                    errorMessage = "Couldn't polish this script: \(error.localizedDescription)"
+                    errorMessage = String(localized: "Couldn't polish this script: \(error.localizedDescription)")
                     isWorking = false
                 }
             }
