@@ -262,6 +262,25 @@ private struct ScrollingTab: View {
                 }
             }
 
+            Section("Presenting & practice") {
+                Toggle("Presentation mode: one slide at a time", isOn: $settings.presentationMode)
+                Text("Slides are separated by a [Slide 1] line, added automatically when you import a PowerPoint, or by a line with just ---. Use ⌃⌥→ and ⌃⌥← (or the hover and phone buttons) to change slides.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Toggle("Memorize mode: practice in small chunks", isOn: $settings.memorizeMode)
+                if settings.memorizeMode {
+                    Picker("Hide", selection: $settings.memorizeLevel) {
+                        ForEach(MemorizeLevel.allCases) { level in
+                            Text(level.title).tag(level)
+                        }
+                    }
+                    Text("Shows a paragraph at a time and hides words so you practice recalling them. Raise the level as you learn it. In Word Tracking mode, hidden words appear as you say them.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section("Speed") {
                 Slider(value: $settings.speed, in: 5...150) {
                     Text("Scroll speed")
@@ -532,6 +551,7 @@ private struct PrivacyTab: View {
                 ShortcutRow(keys: "⌃⌥R", action: "Restart from top")
                 ShortcutRow(keys: "⌃⌥M", action: "Mute / unmute microphone")
                 ShortcutRow(keys: "⌃⌥↑ / ↓", action: "Faster / slower")
+                ShortcutRow(keys: "⌃⌥→ / ←", action: "Next / previous slide or chunk")
             }
 
             Section {

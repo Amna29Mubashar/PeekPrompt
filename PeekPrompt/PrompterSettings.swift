@@ -123,6 +123,9 @@ final class PrompterSettings: ObservableObject {
         static let targetMinutes = "targetMinutes"
         static let autoSpeed = "autoSpeed"
         static let endAction = "endAction"
+        static let presentationMode = "presentationMode"
+        static let memorizeMode = "memorizeMode"
+        static let memorizeLevel = "memorizeLevel"
         static let backgroundOpacity = "backgroundOpacity"
         static let highlightReadingLine = "highlightReadingLine"
         static let fontFamily = "fontFamily"
@@ -262,6 +265,11 @@ final class PrompterSettings: ObservableObject {
 
     /// Voice-Activated mode: match scroll speed to how fast you're talking.
     @Published var autoSpeed: Bool { didSet { defaults.set(autoSpeed, forKey: Key.autoSpeed) } }
+    /// Show one slide at a time (slides separated by [Slide N] or ---).
+    @Published var presentationMode: Bool { didSet { defaults.set(presentationMode, forKey: Key.presentationMode) } }
+    /// Practice: one chunk at a time, with words progressively hidden.
+    @Published var memorizeMode: Bool { didSet { defaults.set(memorizeMode, forKey: Key.memorizeMode) } }
+    @Published var memorizeLevel: MemorizeLevel { didSet { defaults.set(memorizeLevel.rawValue, forKey: Key.memorizeLevel) } }
     @Published var endAction: EndAction { didSet { defaults.set(endAction.rawValue, forKey: Key.endAction) } }
     /// Target length of the talk in minutes, for the pacing timer. 0 = no target.
     @Published var targetMinutes: Double { didSet { defaults.set(targetMinutes, forKey: Key.targetMinutes) } }
@@ -339,6 +347,9 @@ final class PrompterSettings: ObservableObject {
         speed = d.object(forKey: Key.speed) as? Double ?? 30
         voiceSensitivity = d.object(forKey: Key.voiceSensitivity) as? Double ?? 0.5
         pauseOnHover = d.object(forKey: Key.pauseOnHover) as? Bool ?? true
+        presentationMode = d.object(forKey: Key.presentationMode) as? Bool ?? false
+        memorizeMode = d.object(forKey: Key.memorizeMode) as? Bool ?? false
+        memorizeLevel = MemorizeLevel(rawValue: d.integer(forKey: Key.memorizeLevel)) ?? .hideSome
         endAction = EndAction(rawValue: d.string(forKey: Key.endAction) ?? "") ?? .stop
         backgroundOpacity = d.object(forKey: Key.backgroundOpacity) as? Double ?? 1
         autoSpeed = d.object(forKey: Key.autoSpeed) as? Bool ?? false

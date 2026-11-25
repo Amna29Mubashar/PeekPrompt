@@ -154,6 +154,8 @@ final class RemoteServer: ObservableObject {
         case "back": engine.nudge(by: -60)
         case "forward": engine.nudge(by: 60)
         case "mute": MicrophoneMonitor.shared.isMuted.toggle()
+        case "next": engine.nextSegment()
+        case "prev": engine.previousSegment()
         case "show": settings.isPrompterVisible.toggle()
         case "mode":
             let all = ScrollMode.allCases
@@ -175,7 +177,8 @@ final class RemoteServer: ObservableObject {
             "muted": MicrophoneMonitor.shared.isMuted,
             "usesMic": settings.mode.usesMicrophone,
             "visible": settings.isPrompterVisible,
-            "script": settings.currentTitle
+            "script": settings.currentTitle,
+            "segment": engine.segmentLabel ?? ""
         ]
         return (try? JSONSerialization.data(withJSONObject: state)) ?? Data("{}".utf8)
     }
@@ -271,13 +274,18 @@ enum RemotePage {
         <button onclick="cmd('show')"><span class="i">👁</span><span id="showText">Hide</span></button>
         <button onclick="location.reload()"><span class="i">↻</span>Refresh</button>
       </div>
+      <div class="grid" id="slides" style="grid-template-columns: 1fr 1fr; margin-top: 12px; display: none">
+        <button onclick="cmd('prev')"><span class="i">‹</span>Previous</button>
+        <button onclick="cmd('next')"><span class="i">›</span>Next</button>
+      </div>
       <div id="err"></div>
     <script>
       const key = new URLSearchParams(location.search).get('k');
       const $ = id => document.getElementById(id);
       function fmt(s) { s = Math.floor(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
       function render(s) {
-        $('script').textContent = s.script;
+        $('script').textContent = s.script + (s.segment ? ' · ' + s.segment : '');
+        $('slides').style.display = s.segment ? 'grid' : 'none';
         $('meta').textContent = s.mode + ' · ' + (s.usesMic ? 'voice' : s.speed + ' speed') + ' · ' + fmt(s.elapsed);
         $('progress').style.width = Math.round(s.progress * 100) + '%';
         $('playIcon').textContent = s.playing ? '❚❚' : '▶︎';

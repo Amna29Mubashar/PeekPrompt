@@ -72,6 +72,14 @@ struct PrompterView: View {
             Button(settings.placement == .notch ? "Move Anywhere (drag to place)" : "Move Back Under Notch") {
                 settings.placement = settings.placement == .notch ? .floating : .notch
             }
+            if engine.isSegmented {
+                Button("Next \(settings.presentationMode ? "Slide" : "Chunk")") { engine.nextSegment() }
+                    .disabled(engine.isOnLastSegment)
+                Button("Previous \(settings.presentationMode ? "Slide" : "Chunk")") { engine.previousSegment() }
+                    .disabled(engine.segmentIndex == 0)
+            }
+            Toggle("Presentation Mode", isOn: $settings.presentationMode)
+            Toggle("Memorize Mode", isOn: $settings.memorizeMode)
             Picker("Script", selection: Binding(
                 get: { settings.currentScriptID },
                 set: { settings.selectScript($0) }
@@ -106,6 +114,13 @@ struct PrompterView: View {
                 Circle()
                     .fill(statusColor)
                     .frame(width: 6, height: 6)
+                if let label = engine.segmentLabel {
+                    Text(label)
+                        .font(.system(size: 9, weight: .semibold, design: .rounded))
+                        .foregroundStyle(settings.theme.text.opacity(0.55))
+                        .monospacedDigit()
+                        .lineLimit(1)
+                }
                 Spacer()
                 if settings.showProgress {
                     PaceLabel(engine: engine, settings: settings)
@@ -142,13 +157,21 @@ struct ScriptViewport: View {
     @ObservedObject var engine: ScrollEngine
     @ObservedObject var tracker: SpeechTracker = .shared
 
+    /// The current slide/chunk (or whole script), with Memorize mode's hidden words applied.
+    private var shownText: String {
+        let text = engine.displayedText
+        guard settings.memorizeMode else { return text }
+        let reveal = settings.mode == .wordTracking ? tracker.spokenUTF16Offset : 0
+        return settings.memorizeLevel.apply(to: text, revealUpTo: reveal)
+    }
+
     /// The line you're reading sits this far down the text area.
     private let readingLine: CGFloat = 0.3
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .topTrailing) {
-                Text(ScriptFormatter.attributed(settings.script, fontSize: settings.fontSize,
+                Text(ScriptFormatter.attributed(shownText, fontSize: settings.fontSize,
                                                 family: settings.fontFamily, theme: settings.theme,
                                                 spokenUTF16Offset: settings.mode == .wordTracking ? tracker.spokenUTF16Offset : 0))
                     .lineSpacing(CGFloat(settings.lineSpacing))
@@ -283,6 +306,11 @@ struct HoverControls: View {
     var body: some View {
         HStack(spacing: 10) {
             control("backward.end.fill", help: "Restart") { engine.restart() }
+
+            if engine.isSegmented {
+                control("chevron.left", help: "Previous") { engine.previousSegment() }
+                control("chevron.right", help: "Next") { engine.nextSegment() }
+            }
 
             control("minus", help: "Slower") { engine.changeSpeed(by: -5) }
 

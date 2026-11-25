@@ -19,6 +19,28 @@ final class ScrollEngine: ObservableObject {
     /// Seconds left in the 3-2-1 countdown, or nil when not counting down.
     @Published private(set) var countdown: Int?
 
+    /// Slides (Presentation mode) or chunks (Memorize mode). Empty = whole script at once.
+    @Published private(set) var segments: [String] = []
+    @Published private(set) var segmentIndex = 0
+
+    var isSegmented: Bool { !segments.isEmpty }
+    var isOnLastSegment: Bool { segmentIndex >= segments.count - 1 }
+
+    /// The text on screen right now: the current slide/chunk, or the whole script.
+    var displayedText: String {
+        guard isSegmented else { return settings.script }
+        return segments[min(segmentIndex, segments.count - 1)]
+    }
+
+    /// e.g. "Slide 2/8" or "Chunk 3/12".
+    var segmentLabel: String? {
+        guard isSegmented else { return nil }
+        let kind = settings.presentationMode ? "Slide" : "Chunk"
+        return "\(kind) \(segmentIndex + 1)/\(segments.count)"
+    }
+
+    private var cancellables = Set<AnyCancellable>()
+
     /// Set by the view once it has measured the text.
     var contentHeight: CGFloat = 0
 
@@ -43,6 +65,50 @@ final class ScrollEngine: ObservableObject {
     private init(settings: PrompterSettings = .shared, mic: MicrophoneMonitor = .shared) {
         self.settings = settings
         self.mic = mic
+
+        // Re-split the script whenever it or the modes change.
+        Publishers.CombineLatest3(settings.$script, settings.$presentationMode, settings.$memorizeMode)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _, _, _ in self?.rebuildSegments() }
+            .store(in: &cancellables)
+    }
+
+    // MARK: Slides & chunks
+
+    private func rebuildSegments() {
+        let script = settings.script
+        let newSegments: [String]
+        if settings.presentationMode {
+            let slides = ScriptSegments.slides(script)
+            newSegments = slides.count > 1 ? slides : []
+        } else if settings.memorizeMode {
+            let chunks = ScriptSegments.chunks(script)
+            newSegments = chunks.count > 1 ? chunks : []
+        } else {
+            newSegments = []
+        }
+        if newSegments != segments {
+            segments = newSegments
+            segmentIndex = 0
+        }
+        tracker.load(script: displayedText)
+    }
+
+    func nextSegment() {
+        guard isSegmented, !isOnLastSegment else { return }
+        goToSegment(segmentIndex + 1)
+    }
+
+    func previousSegment() {
+        guard isSegmented, segmentIndex > 0 else { return }
+        goToSegment(segmentIndex - 1)
+    }
+
+    private func goToSegment(_ index: Int) {
+        segmentIndex = index
+        offset = 0
+        tracker.load(script: displayedText)
+        if isRunning { lastFrameTime = CACurrentMediaTime() }
     }
 
     // MARK: Controls
@@ -55,7 +121,7 @@ final class ScrollEngine: ObservableObject {
             if settings.autoSpeed { tracker.start() } // only to measure your pace
         }
         if settings.mode == .wordTracking {
-            if tracker.words.isEmpty { tracker.load(script: settings.script) }
+            if tracker.words.isEmpty { tracker.load(script: displayedText) }
             tracker.start()
         }
 
@@ -106,6 +172,10 @@ final class ScrollEngine: ObservableObject {
     func restart() {
         offset = 0
         elapsed = 0
+        if isSegmented && segmentIndex != 0 {
+            segmentIndex = 0
+            tracker.load(script: displayedText)
+        }
         tracker.resetPosition()
         if isRunning { lastFrameTime = CACurrentMediaTime() }
     }
@@ -140,8 +210,7 @@ final class ScrollEngine: ObservableObject {
                 self.isHandlingEnd = false
                 guard self.isRunning else { return }
                 if let nextID {
-                    self.settings.selectScript(nextID) // the view restarts from the top
-                    self.tracker.load(script: self.settings.script)
+                    self.settings.selectScript(nextID) // segments and tracker rebuild automatically
                 }
                 self.restart()
             }
@@ -208,7 +277,8 @@ final class ScrollEngine: ObservableObject {
             let moving = abs(gap) > 0.5
             if isAdvancing != moving { isAdvancing = moving }
             if moving { offset += gap * CGFloat(min(1, deltaTime * 5)) }
-            if !tracker.words.isEmpty, tracker.spokenWordCount >= tracker.words.count {
+            if !tracker.words.isEmpty, tracker.spokenWordCount >= tracker.words.count,
+               !isSegmented || isOnLastSegment {
                 reachedEnd()
             }
             return
@@ -228,6 +298,7 @@ final class ScrollEngine: ObservableObject {
         guard shouldMove, contentHeight > 0 else { return }
 
         offset = min(offset + effectiveSpeed * CGFloat(deltaTime), maxOffset)
-        if offset >= maxOffset { reachedEnd() }
+        // In Presentation/Memorize mode, wait at the end of each slide for "next".
+        if offset >= maxOffset, !isSegmented || isOnLastSegment { reachedEnd() }
     }
 }

@@ -44,13 +44,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
 
-        // Word tracking needs the current script split into words.
-        settings.$script
-            .removeDuplicates()
-            .receive(on: RunLoop.main)
-            .sink { script in SpeechTracker.shared.load(script: script) }
-            .store(in: &cancellables)
-
         // Leaving word-tracking mode stops speech recognition.
         settings.$mode
             .removeDuplicates()
@@ -89,6 +82,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hotKeys.register(keyCode: UInt32(kVK_ANSI_M), modifiers: mods) { MicrophoneMonitor.shared.isMuted.toggle() }
         hotKeys.register(keyCode: UInt32(kVK_UpArrow), modifiers: mods) { ScrollEngine.shared.changeSpeed(by: 5) }
         hotKeys.register(keyCode: UInt32(kVK_DownArrow), modifiers: mods) { ScrollEngine.shared.changeSpeed(by: -5) }
+        hotKeys.register(keyCode: UInt32(kVK_RightArrow), modifiers: mods) { ScrollEngine.shared.nextSegment() }
+        hotKeys.register(keyCode: UInt32(kVK_LeftArrow), modifiers: mods) { ScrollEngine.shared.previousSegment() }
     }
 }
 
@@ -123,6 +118,9 @@ struct MenuContent: View {
                 Text(script.title).tag(script.id)
             }
         }
+
+        Toggle("Presentation Mode (one slide at a time)", isOn: $settings.presentationMode)
+        Toggle("Memorize Mode", isOn: $settings.memorizeMode)
 
         Picker("Scrolling Mode", selection: $settings.mode) {
             ForEach(ScrollMode.allCases) { mode in
