@@ -200,6 +200,18 @@ private struct AppearanceTab: View {
                     }
                 }
                 .disabled(!settings.glowEnabled)
+                HStack {
+                    Text("Glow strength")
+                    Slider(value: $settings.glowStrength, in: 0.5...2.5) {
+                        Text("Glow strength")
+                    } minimumValueLabel: {
+                        Text("Subtle").font(.caption)
+                    } maximumValueLabel: {
+                        Text("Bold").font(.caption)
+                    }
+                    .labelsHidden()
+                }
+                .disabled(!settings.glowEnabled)
             }
         }
         .formStyle(.grouped)

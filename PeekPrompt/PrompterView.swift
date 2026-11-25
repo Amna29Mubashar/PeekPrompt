@@ -22,7 +22,8 @@ struct PrompterView: View {
             }
 
             if settings.glowEnabled && mic.isRunning {
-                GlowBorder(shape: shape, intensity: glowIntensity, colors: settings.glowPalette.colors)
+                GlowBorder(shape: shape, intensity: glowIntensity, colors: settings.glowPalette.colors,
+                           strength: CGFloat(settings.glowStrength))
             }
 
             if engine.isHovering {
@@ -55,7 +56,7 @@ struct PrompterView: View {
     /// How strongly the border should glow: 0 when quiet, 1 when clearly speaking.
     private var glowIntensity: CGFloat {
         guard !mic.isMuted else { return 0 }
-        let floor = settings.speakingThreshold * 0.8
+        let floor = settings.speakingThreshold * 0.6
         let value = (mic.level - floor) / max(1 - floor, 0.01)
         return min(max(value, 0), 1)
     }
