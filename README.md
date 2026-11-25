@@ -116,6 +116,14 @@ Open **Settings → Appearance**.
 
 - **Voice glow:** a gradient border that brightens and thickens as you talk. Choose a color set and adjust **Glow strength**.
 
+### External monitors
+In **Settings → Appearance → Display**, choose where the prompter appears:
+- **Stay on the MacBook screen** (default): it always stays under your MacBook's notch.
+- **Move with my mouse to any screen:** it jumps to whichever screen your pointer is on.
+- **A specific monitor**, by name: it always appears there.
+
+On a screen without a notch, it hangs from the top center, right below where a webcam usually sits. You can also right-click the prompter → **Display**.
+
 ### Moving the prompter
 <p align="center"><img src="docs/screens/position.png" width="560" alt="Position setting: under the notch or anywhere"></p>
 

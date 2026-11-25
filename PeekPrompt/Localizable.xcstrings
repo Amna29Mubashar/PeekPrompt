@@ -1457,6 +1457,64 @@
         }
       }
     },
+    "Choose whether the prompter stays on your MacBook, follows your mouse to an external monitor, or always uses one screen. On a screen without a notch, it hangs from the top center, right under where a webcam usually sits.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige si el teleprompter se queda en tu MacBook, sigue al ratón a un monitor externo o usa siempre una pantalla. En una pantalla sin notch, cuelga del centro superior, justo debajo de donde suele estar la webcam."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez si le prompteur reste sur votre MacBook, suit votre souris sur un moniteur externe ou utilise toujours le même écran. Sur un écran sans encoche, il se place en haut au centre, juste sous l’emplacement habituel de la webcam."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle, ob der Prompter auf deinem MacBook bleibt, deiner Maus auf einen externen Monitor folgt oder immer einen Bildschirm nutzt. Auf einem Bildschirm ohne Notch hängt er oben in der Mitte, direkt unter der üblichen Webcam-Position."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli se il prompter resta sul MacBook, segue il mouse su un monitor esterno o usa sempre uno schermo. Su uno schermo senza notch appare in alto al centro, proprio sotto dove di solito si trova la webcam."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha se o teleprompter fica no MacBook, acompanha o mouse até um monitor externo ou usa sempre uma tela. Em uma tela sem notch, ele fica no topo central, logo abaixo de onde a webcam costuma ficar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プロンプターをMacBookに固定するか、マウスに合わせて外部モニタへ移動するか、常に特定の画面を使うかを選びます。ノッチのない画面では、ウェブカメラがよくある上部中央に表示されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "프롬프터를 MacBook에 고정할지, 마우스를 따라 외장 모니터로 이동할지, 항상 한 화면을 사용할지 선택하세요. 노치가 없는 화면에서는 웹캠이 보통 있는 상단 가운데에 표시됩니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择提词器固定在 MacBook 上、随鼠标移到外接显示器,还是始终使用某一块屏幕。在没有刘海的屏幕上,它会显示在顶部中央,正好位于摄像头通常所在的位置下方。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر ما إذا كان الملقّن يبقى على MacBook أو يتبع الماوس إلى شاشة خارجية أو يستخدم شاشة واحدة دائمًا. على شاشة بلا نتوء، يظهر في أعلى المنتصف أسفل موضع كاميرا الويب المعتاد مباشرةً."
+          }
+        }
+      }
+    },
     "Chunk": {
       "localizations": {
         "es": {
@@ -2439,6 +2497,122 @@
           "stringUnit": {
             "state": "translated",
             "value": "إملاء"
+          }
+        }
+      }
+    },
+    "Disconnected display": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pantalla desconectada"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Écran déconnecté"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Getrennter Bildschirm"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schermo scollegato"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tela desconectada"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "接続されていないディスプレイ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "연결 해제된 디스플레이"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已断开的显示器"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "شاشة غير متصلة"
+          }
+        }
+      }
+    },
+    "Display": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pantalla"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Écran"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirm"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schermo"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tela"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ディスプレイ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "디스플레이"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示器"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الشاشة"
           }
         }
       }
@@ -5107,6 +5281,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "نقل إلى مجلد"
+          }
+        }
+      }
+    },
+    "Move with my mouse to any screen": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moverse con el ratón a cualquier pantalla"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivre ma souris sur tous les écrans"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit der Maus auf jeden Bildschirm wechseln"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Segui il mouse su qualsiasi schermo"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acompanhar o mouse em qualquer tela"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "マウスに合わせて画面を移動"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "마우스를 따라 다른 화면으로 이동"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "随鼠标移到任意屏幕"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الانتقال مع الماوس إلى أي شاشة"
           }
         }
       }
@@ -9577,6 +9809,64 @@
         }
       }
     },
+    "Show on": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar en"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher sur"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzeigen auf"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra su"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar em"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示する画面"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "표시할 화면"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示在"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "العرض على"
+          }
+        }
+      }
+    },
     "Show progress": {
       "localizations": {
         "es": {
@@ -10791,6 +11081,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "ابدأ القراءة في وضع التفعيل الصوتي. بعد بضع ثوانٍ، يقيس PeekPrompt سرعتك ويحلّ محل شريط السرعة."
+          }
+        }
+      }
+    },
+    "Stay on the MacBook screen": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quedarse en la pantalla del MacBook"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rester sur l’écran du MacBook"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf dem MacBook-Bildschirm bleiben"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resta sullo schermo del MacBook"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ficar na tela do MacBook"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MacBookの画面に固定"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MacBook 화면에 고정"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "固定在 MacBook 屏幕"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "البقاء على شاشة MacBook"
           }
         }
       }
