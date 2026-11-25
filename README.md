@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/icon.png" width="128" alt="PeekPrompt icon"></p>
+
 # PeekPrompt
 
 [![Build](https://github.com/Amna29Mubashar/PeekPrompt/actions/workflows/build.yml/badge.svg)](https://github.com/Amna29Mubashar/PeekPrompt/actions/workflows/build.yml)
