@@ -60,6 +60,7 @@ private struct ScriptTab: View {
     @State private var isNamingFolder = false
     @State private var folderBeingRenamed: String?
     @State private var renameText = ""
+    @State private var isPolishing = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -182,6 +183,12 @@ private struct ScriptTab: View {
                     }
                     .tint(dictation.isDictating ? .red : nil)
                     .help("Speak and your words are added to the end of the script")
+                    Button {
+                        isPolishing = true
+                    } label: {
+                        Label("Magic Polish", systemImage: "wand.and.stars")
+                    }
+                    .help("Rewrite this script so it's easier to say out loud")
                     Text("\(settings.wordCount) words · about \(readingTime) to read")
                     Spacer()
                     Text("[cues] in brackets are dimmed")
@@ -201,6 +208,9 @@ private struct ScriptTab: View {
             }
         }
         .onDisappear { dictation.stop() }
+        .sheet(isPresented: $isPolishing) {
+            MagicPolishSheet(settings: settings)
+        }
     }
 
     /// Scripts in one folder (or unfiled), draggable to reorder.
