@@ -61,6 +61,9 @@ private struct ScriptTab: View {
     @State private var folderBeingRenamed: String?
     @State private var renameText = ""
     @State private var isPolishing = false
+    /// Folder name currently highlighted while dragging a script over it.
+    @State private var dropTarget: String?
+    private let otherScriptsDropID = "\u{0}other"
 
     var body: some View {
         HStack(spacing: 12) {
@@ -74,7 +77,16 @@ private struct ScriptTab: View {
                         Section {
                             scriptRows(inFolder: folder)
                         } header: {
-                            Label(folder, systemImage: "folder")
+                            Label(folder, systemImage: dropTarget == folder ? "folder.fill" : "folder")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
+                                .foregroundStyle(dropTarget == folder ? Color.accentColor : Color.secondary)
+                                .onDrop(of: [.text], isTargeted: Binding(
+                                    get: { dropTarget == folder },
+                                    set: { dropTarget = $0 ? folder : (dropTarget == folder ? nil : dropTarget) }
+                                )) { providers in
+                                    moveDroppedScripts(providers, to: folder)
+                                }
                                 .contextMenu {
                                     Button("Rename Folder…") {
                                         renameText = folder
@@ -89,8 +101,21 @@ private struct ScriptTab: View {
                         }
                     }
 
-                    Section(settings.folderNames.isEmpty ? "" : String(localized: "Other Scripts")) {
+                    Section {
                         scriptRows(inFolder: nil)
+                    } header: {
+                        if !settings.folderNames.isEmpty {
+                            Text("Other Scripts")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .contentShape(Rectangle())
+                                .foregroundStyle(dropTarget == otherScriptsDropID ? Color.accentColor : Color.secondary)
+                                .onDrop(of: [.text], isTargeted: Binding(
+                                    get: { dropTarget == otherScriptsDropID },
+                                    set: { dropTarget = $0 ? otherScriptsDropID : (dropTarget == otherScriptsDropID ? nil : dropTarget) }
+                                )) { providers in
+                                    moveDroppedScripts(providers, to: nil)
+                                }
+                        }
                     }
                 }
                 .listStyle(.sidebar)
@@ -147,12 +172,34 @@ private struct ScriptTab: View {
 
             // Editor
             VStack(alignment: .leading, spacing: 8) {
-                TextField("Title", text: Binding(
-                    get: { settings.currentTitle },
-                    set: { settings.renameScript(settings.currentScriptID, to: $0) }
-                ))
-                .textFieldStyle(.plain)
-                .font(.title3.weight(.semibold))
+                HStack(spacing: 10) {
+                    TextField("Title", text: Binding(
+                        get: { settings.currentTitle },
+                        set: { settings.renameScript(settings.currentScriptID, to: $0) }
+                    ))
+                    .textFieldStyle(.plain)
+                    .font(.title3.weight(.semibold))
+
+                    if !settings.folderNames.isEmpty {
+                        Picker(selection: Binding<String>(
+                            get: {
+                                let folder = settings.scripts.first { $0.id == settings.currentScriptID }?.folder
+                                return folder.flatMap { settings.folderNames.contains($0) ? $0 : nil } ?? ""
+                            },
+                            set: { settings.setFolder($0.isEmpty ? nil : $0, for: settings.currentScriptID) }
+                        )) {
+                            Text("No Folder").tag("")
+                            Divider()
+                            ForEach(settings.folderNames, id: \.self) { name in
+                                Label(name, systemImage: "folder").tag(name)
+                            }
+                        } label: {
+                            Label("Folder", systemImage: "folder")
+                        }
+                        .fixedSize()
+                        .help("Move this script into a folder")
+                    }
+                }
 
                 TextEditor(text: $settings.script)
                     .font(.system(size: 13, design: .rounded))
@@ -230,10 +277,19 @@ private struct ScriptTab: View {
     /// Scripts in one folder (or unfiled), draggable to reorder.
     @ViewBuilder
     private func scriptRows(inFolder folder: String?) -> some View {
+        if let folder, settings.scripts(inFolder: folder).isEmpty {
+            Text("Drag scripts onto the folder name, or pick it from the Folder menu")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .lineLimit(2)
+                .selectionDisabled()
+        }
         ForEach(settings.scripts(inFolder: folder)) { script in
             Text(script.title.isEmpty ? String(localized: "Untitled") : script.title)
                 .lineLimit(1)
                 .tag(script.id)
+                // Lets the row be dropped onto a folder name. Reordering still works.
+                .itemProvider { NSItemProvider(object: script.id.uuidString as NSString) }
                 .contextMenu {
                     Button("Duplicate") { settings.duplicateScript(script.id) }
                     Menu("Move to Folder") {
@@ -251,6 +307,20 @@ private struct ScriptTab: View {
         .onMove { source, destination in
             settings.moveScripts(inFolder: folder, from: source, to: destination)
         }
+    }
+
+    /// Moves dragged scripts (identified by their ID text) into `folder` (nil = no folder).
+    private func moveDroppedScripts(_ providers: [NSItemProvider], to folder: String?) -> Bool {
+        var handled = false
+        for provider in providers where provider.canLoadObject(ofClass: NSString.self) {
+            handled = true
+            _ = provider.loadObject(ofClass: NSString.self) { object, _ in
+                guard let text = object as? String, let id = UUID(uuidString: text) else { return }
+                DispatchQueue.main.async { settings.setFolder(folder, for: id) }
+            }
+        }
+        dropTarget = nil
+        return handled
     }
 
     /// Average speaking pace is roughly 150 words per minute.
