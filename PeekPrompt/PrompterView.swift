@@ -20,7 +20,7 @@ struct PrompterView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Color.black
+            settings.theme.background
 
             VStack(spacing: 0) {
                 statusRow
@@ -38,10 +38,10 @@ struct PrompterView: View {
                 VStack(spacing: 0) {
                     Color.clear.frame(height: layout.topInset)
                     ZStack {
-                        Color.black.opacity(0.75)
+                        settings.theme.background.opacity(0.8)
                         Text("\(count)")
                             .font(.system(size: 56, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(settings.theme.text)
                             .contentTransition(.numericText(countsDown: true))
                             .id(count)
                             .transition(.scale(scale: 1.6).combined(with: .opacity))
@@ -64,7 +64,7 @@ struct PrompterView: View {
         .clipShape(shape)
         .animation(.easeInOut(duration: 0.18), value: engine.isHovering)
         .animation(.easeInOut(duration: 0.2), value: engine.countdown == nil)
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(settings.theme.colorScheme)
         .contextMenu {
             Button(engine.isRunning ? "Pause" : "Play") { engine.toggle() }
             Button("Restart from Top") { engine.restart() }
@@ -102,7 +102,7 @@ struct PrompterView: View {
                 if settings.showProgress {
                     Text("\(Int(engine.progress * 100))%")
                         .font(.system(size: 9, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(settings.theme.text.opacity(0.5))
                         .monospacedDigit()
                 }
             }
@@ -119,7 +119,7 @@ struct PrompterView: View {
         if engine.isAdvancing { return .green }
         if engine.countdown != nil { return .orange }
         if engine.isRunning { return .yellow }
-        return .white.opacity(0.3)
+        return settings.theme.text.opacity(0.3)
     }
 }
 
@@ -142,7 +142,8 @@ struct ScriptViewport: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .topTrailing) {
-                Text(ScriptFormatter.attributed(settings.script, fontSize: settings.fontSize))
+                Text(ScriptFormatter.attributed(settings.script, fontSize: settings.fontSize,
+                                                family: settings.fontFamily, theme: settings.theme))
                     .lineSpacing(CGFloat(settings.lineSpacing))
                     .multilineTextAlignment(.center)
                     .frame(width: max(geo.size.width - 28, 50))
@@ -156,7 +157,7 @@ struct ScriptViewport: View {
                     .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
 
                 if settings.showProgress {
-                    ProgressStrip(progress: engine.progress)
+                    ProgressStrip(progress: engine.progress, color: settings.theme.text)
                         .padding(.trailing, 2)
                         .padding(.vertical, 10)
                 }
@@ -216,19 +217,20 @@ struct ScriptViewport: View {
 /// Turns the script into styled text. Anything in [square brackets] is a cue:
 /// dimmed and italic so you don't read it aloud.
 enum ScriptFormatter {
-    static func attributed(_ script: String, fontSize: Double) -> AttributedString {
-        let text = script.isEmpty ? "Open Settings from the menu bar and paste your script." : script
+    static func attributed(_ script: String, fontSize: Double,
+                           family: PrompterFont = .rounded, theme: PrompterTheme = .dark) -> AttributedString {
+        let text = script.isEmpty ? "Open Settings and paste your script." : script
         var result = AttributedString(text)
-        result.font = .system(size: fontSize, weight: .medium, design: .rounded)
-        result.foregroundColor = .white
+        result.font = family.font(size: fontSize)
+        result.foregroundColor = theme.text
 
         guard let regex = try? NSRegularExpression(pattern: "\\[[^\\]]+\\]") else { return result }
         let nsRange = NSRange(text.startIndex..., in: text)
         for match in regex.matches(in: text, range: nsRange) {
             guard let stringRange = Range(match.range, in: text),
                   let attributedRange = Range(stringRange, in: result) else { continue }
-            result[attributedRange].font = .system(size: fontSize * 0.85, weight: .regular, design: .rounded).italic()
-            result[attributedRange].foregroundColor = Color.white.opacity(0.4)
+            result[attributedRange].font = family.font(size: fontSize * 0.85, italic: true, weight: .regular)
+            result[attributedRange].foregroundColor = theme.text.opacity(0.4)
         }
         return result
     }
@@ -236,13 +238,14 @@ enum ScriptFormatter {
 
 struct ProgressStrip: View {
     let progress: Double
+    var color: Color = .white
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .top) {
-                Capsule().fill(.white.opacity(0.12))
+                Capsule().fill(color.opacity(0.12))
                 Capsule()
-                    .fill(.white.opacity(0.55))
+                    .fill(color.opacity(0.55))
                     .frame(height: geo.size.height * progress)
             }
         }

@@ -211,6 +211,17 @@ private struct AppearanceTab: View {
             }
 
             Section("Text") {
+                Picker("Font", selection: $settings.fontFamily) {
+                    ForEach(PrompterFont.allCases) { family in
+                        Text(family.title).font(family.font(size: 13)).tag(family)
+                    }
+                }
+                Picker("Theme", selection: $settings.theme) {
+                    ForEach(PrompterTheme.allCases) { theme in
+                        Text(theme.title).tag(theme)
+                    }
+                }
+                .pickerStyle(.segmented)
                 LabeledSlider(title: "Font size", value: $settings.fontSize, range: 10...36, unit: "pt")
                 LabeledSlider(title: "Line spacing", value: $settings.lineSpacing, range: 0...16, unit: "pt")
                 Toggle("Highlight the line you're reading", isOn: $settings.highlightReadingLine)

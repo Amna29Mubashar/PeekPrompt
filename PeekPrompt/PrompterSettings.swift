@@ -87,6 +87,8 @@ final class PrompterSettings: ObservableObject {
         static let placement = "placement"
         static let countdownSeconds = "countdownSeconds"
         static let highlightReadingLine = "highlightReadingLine"
+        static let fontFamily = "fontFamily"
+        static let theme = "theme"
         static let floatingX = "floatingX"
         static let floatingY = "floatingY"
     }
@@ -114,6 +116,8 @@ final class PrompterSettings: ObservableObject {
     @Published var glowPalette: GlowPalette { didSet { defaults.set(glowPalette.rawValue, forKey: Key.glowPalette) } }
     /// 0.5 = subtle ... 2 = very bold.
     @Published var glowStrength: Double { didSet { defaults.set(glowStrength, forKey: Key.glowStrength) } }
+    @Published var fontFamily: PrompterFont { didSet { defaults.set(fontFamily.rawValue, forKey: Key.fontFamily) } }
+    @Published var theme: PrompterTheme { didSet { defaults.set(theme.rawValue, forKey: Key.theme) } }
     /// Brighten the line you're reading and dim the rest.
     @Published var highlightReadingLine: Bool { didSet { defaults.set(highlightReadingLine, forKey: Key.highlightReadingLine) } }
     @Published var showProgress: Bool { didSet { defaults.set(showProgress, forKey: Key.showProgress) } }
@@ -165,6 +169,8 @@ final class PrompterSettings: ObservableObject {
         glowEnabled = d.object(forKey: Key.glowEnabled) as? Bool ?? true
         glowPalette = GlowPalette(rawValue: d.string(forKey: Key.glowPalette) ?? "") ?? .aurora
         glowStrength = d.object(forKey: Key.glowStrength) as? Double ?? 1.4
+        fontFamily = PrompterFont(rawValue: d.string(forKey: Key.fontFamily) ?? "") ?? .rounded
+        theme = PrompterTheme(rawValue: d.string(forKey: Key.theme) ?? "") ?? .dark
         highlightReadingLine = d.object(forKey: Key.highlightReadingLine) as? Bool ?? true
         showProgress = d.object(forKey: Key.showProgress) as? Bool ?? true
         hideFromCapture = d.object(forKey: Key.hideFromCapture) as? Bool ?? true

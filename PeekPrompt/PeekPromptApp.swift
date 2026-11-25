@@ -31,6 +31,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory) // menu bar app, no Dock icon
+        FontRegistrar.registerBundledFonts()
         windowController = PrompterWindowController(settings: settings, engine: engine, mic: mic, layout: .shared)
 
         // Keep the microphone on only while something actually needs it.
