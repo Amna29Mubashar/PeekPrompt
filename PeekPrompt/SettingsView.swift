@@ -34,13 +34,17 @@ struct SettingsView: View {
                     Text("Tip: right-click the prompter for quick actions")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer()
                 Button("Quit PeekPrompt", role: .destructive) { NSApp.terminate(nil) }
             }
             .padding(12)
         }
-        .frame(width: 640, height: 540)
+        .frame(minWidth: 600, idealWidth: 680, maxWidth: .infinity,
+               minHeight: 500, idealHeight: 580, maxHeight: .infinity)
+        .background(ResizableWindow())
         .onAppear {
             settings.isSettingsOpen = true
             // Menu bar apps open Settings behind other windows unless we step forward.
@@ -70,7 +74,7 @@ private struct ScriptTab: View {
                     ScriptLibraryList(settings: settings)
                 }
             }
-            .frame(width: 190)
+            .frame(minWidth: 170, idealWidth: 200, maxWidth: 260)
             .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
 
@@ -99,9 +103,10 @@ private struct ScriptTab: View {
                         if dictation.isDictating {
                             Image(systemName: "waveform").foregroundStyle(.red)
                             Text(dictation.liveText.isEmpty ? "Listening… start talking." : dictation.liveText)
-                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
                         } else if let error = dictation.errorMessage {
                             Text(error).foregroundStyle(.red)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                     }
                     .font(.caption)
@@ -127,12 +132,11 @@ private struct ScriptTab: View {
                 // Row 2: info
                 HStack(spacing: 8) {
                     Text("\(settings.wordCount) words · about \(readingTime) to read")
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
                     Spacer(minLength: 8)
                     Text("[cues] in brackets are dimmed")
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                        .layoutPriority(-1)
+                        .multilineTextAlignment(.trailing)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -172,7 +176,7 @@ struct ScriptLibraryList: View {
             )) {
                 ForEach(settings.scripts) { script in
                     Text(script.title.isEmpty ? String(localized: "Untitled") : script.title)
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
                         .tag(script.id)
                         .contextMenu {
                             Button("Duplicate") { settings.duplicateScript(script.id) }
@@ -498,5 +502,19 @@ private struct PrivacyTab: View {
             }
         }
         .formStyle(.grouped)
+    }
+}
+
+
+/// Makes sure the hosting window can be resized by dragging its edges,
+/// like any other Mac window.
+struct ResizableWindow: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async { view.window?.styleMask.insert(.resizable) }
+        return view
+    }
+    func updateNSView(_ nsView: NSView, context: Context) {
+        DispatchQueue.main.async { nsView.window?.styleMask.insert(.resizable) }
     }
 }

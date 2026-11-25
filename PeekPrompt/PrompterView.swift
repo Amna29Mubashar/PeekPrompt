@@ -130,7 +130,7 @@ struct PrompterView: View {
                         .font(.system(size: 9, weight: .semibold, design: .rounded))
                         .foregroundStyle(settings.theme.text.opacity(0.55))
                         .monospacedDigit()
-                        .lineLimit(1)
+                        .fixedSize() // always show in full, never "…"
                 }
                 Spacer()
                 if settings.showProgress {
@@ -447,7 +447,7 @@ struct PaceLabel: View {
         .font(.system(size: 9, weight: .semibold, design: .rounded))
         .foregroundStyle(settings.theme.text.opacity(0.55))
         .monospacedDigit()
-        .lineLimit(1)
+        .fixedSize() // always show in full, never "…"
     }
 
     private var timeText: String {

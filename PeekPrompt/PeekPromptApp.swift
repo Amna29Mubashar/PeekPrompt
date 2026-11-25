@@ -25,6 +25,8 @@ struct PeekPromptApp: App {
         Settings {
             SettingsView(settings: .shared, engine: .shared, mic: .shared)
         }
+        // Lets the window be dragged larger or smaller, down to the size the content needs.
+        .windowResizability(.contentMinSize)
     }
 }
 
