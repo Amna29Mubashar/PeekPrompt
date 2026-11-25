@@ -34,6 +34,23 @@ struct PrompterView: View {
                            strength: CGFloat(settings.glowStrength))
             }
 
+            if let count = engine.countdown {
+                VStack(spacing: 0) {
+                    Color.clear.frame(height: layout.topInset)
+                    ZStack {
+                        Color.black.opacity(0.75)
+                        Text("\(count)")
+                            .font(.system(size: 56, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .contentTransition(.numericText(countsDown: true))
+                            .id(count)
+                            .transition(.scale(scale: 1.6).combined(with: .opacity))
+                    }
+                }
+                .animation(.spring(duration: 0.35), value: count)
+                .transition(.opacity)
+            }
+
             if engine.isHovering {
                 VStack {
                     Spacer()
@@ -46,6 +63,7 @@ struct PrompterView: View {
         .frame(width: CGFloat(settings.width), height: layout.topInset + CGFloat(settings.height))
         .clipShape(shape)
         .animation(.easeInOut(duration: 0.18), value: engine.isHovering)
+        .animation(.easeInOut(duration: 0.2), value: engine.countdown == nil)
         .preferredColorScheme(.dark)
         .contextMenu {
             Button(engine.isRunning ? "Pause" : "Play") { engine.toggle() }
@@ -99,6 +117,7 @@ struct PrompterView: View {
     private var statusColor: Color {
         if settings.mode == .voiceActivated && mic.isMuted { return .red }
         if engine.isAdvancing { return .green }
+        if engine.countdown != nil { return .orange }
         if engine.isRunning { return .yellow }
         return .white.opacity(0.3)
     }

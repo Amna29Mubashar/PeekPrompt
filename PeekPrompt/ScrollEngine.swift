@@ -14,6 +14,8 @@ final class ScrollEngine: ObservableObject {
     /// True on frames where the text is actually moving.
     @Published private(set) var isAdvancing = false
     @Published var isHovering = false
+    /// Seconds left in the 3-2-1 countdown, or nil when not counting down.
+    @Published private(set) var countdown: Int?
 
     /// Set by the view once it has measured the text.
     var contentHeight: CGFloat = 0
@@ -21,6 +23,7 @@ final class ScrollEngine: ObservableObject {
     private let settings: PrompterSettings
     private let mic: MicrophoneMonitor
     private var timer: Timer?
+    private var countdownTimer: Timer?
     private var lastFrameTime: CFTimeInterval = 0
 
     var maxOffset: CGFloat { max(0, contentHeight) }
@@ -43,13 +46,44 @@ final class ScrollEngine: ObservableObject {
         if isFinished { offset = 0 }
         isRunning = true
         if settings.mode == .voiceActivated { mic.start() }
-        startTimer()
+
+        // Count down only when starting from the top, so resuming mid-script is instant.
+        if offset == 0 && settings.countdownSeconds > 0 {
+            startCountdown(from: settings.countdownSeconds)
+        } else {
+            startTimer()
+        }
     }
 
     func pause() {
         isRunning = false
         isAdvancing = false
+        cancelCountdown()
         stopTimer()
+    }
+
+    // MARK: Countdown
+
+    private func startCountdown(from seconds: Int) {
+        cancelCountdown()
+        countdown = seconds
+        let timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self, let remaining = self.countdown else { return }
+            if remaining <= 1 {
+                self.cancelCountdown()
+                self.startTimer()
+            } else {
+                self.countdown = remaining - 1
+            }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        countdownTimer = timer
+    }
+
+    private func cancelCountdown() {
+        countdownTimer?.invalidate()
+        countdownTimer = nil
+        countdown = nil
     }
 
     func toggle() {

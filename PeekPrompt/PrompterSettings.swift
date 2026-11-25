@@ -85,6 +85,7 @@ final class PrompterSettings: ObservableObject {
         static let showProgress = "showProgress"
         static let globalShortcuts = "globalShortcuts"
         static let placement = "placement"
+        static let countdownSeconds = "countdownSeconds"
         static let floatingX = "floatingX"
         static let floatingY = "floatingY"
     }
@@ -99,6 +100,8 @@ final class PrompterSettings: ObservableObject {
     /// 0 = needs a loud voice, 1 = reacts to a whisper.
     @Published var voiceSensitivity: Double { didSet { defaults.set(voiceSensitivity, forKey: Key.voiceSensitivity) } }
     @Published var pauseOnHover: Bool { didSet { defaults.set(pauseOnHover, forKey: Key.pauseOnHover) } }
+    /// Seconds of 3-2-1 countdown before scrolling starts from the top. 0 = off.
+    @Published var countdownSeconds: Int { didSet { defaults.set(countdownSeconds, forKey: Key.countdownSeconds) } }
 
     // MARK: Appearance
     @Published var fontSize: Double { didSet { defaults.set(fontSize, forKey: Key.fontSize) } }
@@ -151,6 +154,7 @@ final class PrompterSettings: ObservableObject {
         speed = d.object(forKey: Key.speed) as? Double ?? 30
         voiceSensitivity = d.object(forKey: Key.voiceSensitivity) as? Double ?? 0.5
         pauseOnHover = d.object(forKey: Key.pauseOnHover) as? Bool ?? true
+        countdownSeconds = d.object(forKey: Key.countdownSeconds) as? Int ?? 3
         fontSize = d.object(forKey: Key.fontSize) as? Double ?? 16
         lineSpacing = d.object(forKey: Key.lineSpacing) as? Double ?? 4
         width = d.object(forKey: Key.width) as? Double ?? 360
