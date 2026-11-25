@@ -6,6 +6,7 @@ struct PrompterView: View {
     @ObservedObject var engine: ScrollEngine
     @ObservedObject var mic: MicrophoneMonitor
     @ObservedObject var layout: NotchLayout
+    @Environment(\.openSettings) private var openSettings
 
     private let shape = NotchShape(topCornerRadius: 10, bottomCornerRadius: 22)
 
@@ -37,6 +38,18 @@ struct PrompterView: View {
         .clipShape(shape)
         .animation(.easeInOut(duration: 0.18), value: engine.isHovering)
         .preferredColorScheme(.dark)
+        .contextMenu {
+            Button(engine.isRunning ? "Pause" : "Play") { engine.toggle() }
+            Button("Restart from Top") { engine.restart() }
+            Divider()
+            Button("Hide Prompter") { settings.isPrompterVisible = false }
+            Button("Settings…") {
+                NSApp.activate()
+                openSettings()
+            }
+            Divider()
+            Button("Quit PeekPrompt") { NSApp.terminate(nil) }
+        }
     }
 
     /// How strongly the border should glow: 0 when quiet, 1 when clearly speaking.

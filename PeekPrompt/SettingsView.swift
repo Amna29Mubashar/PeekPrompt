@@ -7,6 +7,7 @@ struct SettingsView: View {
     @ObservedObject var mic: MicrophoneMonitor
 
     var body: some View {
+        VStack(spacing: 0) {
         TabView {
             ScriptTab(settings: settings)
                 .tabItem { Label("Script", systemImage: "doc.text") }
@@ -20,7 +21,22 @@ struct SettingsView: View {
             PrivacyTab(settings: settings)
                 .tabItem { Label("Privacy & Keys", systemImage: "eye.slash") }
         }
-        .frame(width: 520, height: 460)
+
+            Divider()
+            HStack {
+                Button(settings.isPrompterVisible ? "Hide Prompter" : "Show Prompter") {
+                    settings.isPrompterVisible.toggle()
+                }
+                Spacer()
+                Text("Tip: right-click the prompter for quick actions")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button("Quit PeekPrompt", role: .destructive) { NSApp.terminate(nil) }
+            }
+            .padding(12)
+        }
+        .frame(width: 520, height: 500)
         .onAppear {
             settings.isSettingsOpen = true
             // Menu bar apps open Settings behind other windows unless we step forward.
