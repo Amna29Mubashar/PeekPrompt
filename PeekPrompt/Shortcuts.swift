@@ -192,7 +192,7 @@ struct ShortcutRecorderRow: View {
             case kVK_Escape:
                 stopRecording()
             case kVK_Delete, kVK_ForwardDelete:
-                settings.setCombo(.none, for: action)
+                settings.setCombo(KeyCombo.none, for: action)
                 stopRecording()
             default:
                 guard let newCombo = KeyCombo.from(event: event) else {
@@ -200,7 +200,7 @@ struct ShortcutRecorderRow: View {
                     return nil
                 }
                 if let other = settings.action(using: newCombo, except: action) {
-                    settings.setCombo(.none, for: other)
+                    settings.setCombo(KeyCombo.none, for: other)
                     message = String(localized: "Moved from \u{201C}\(other.title)\u{201D}.")
                 }
                 settings.setCombo(newCombo, for: action)
