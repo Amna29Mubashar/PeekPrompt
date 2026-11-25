@@ -62,33 +62,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
 
-        settings.$globalShortcuts
-            .removeDuplicates()
+        // Re-register whenever shortcuts change; pause them while one is being recorded.
+        Publishers.CombineLatest3(settings.$globalShortcuts, settings.$shortcuts, settings.$recordingShortcut)
             .receive(on: RunLoop.main)
-            .sink { [weak self] enabled in
-                if enabled { self?.registerShortcuts() } else { GlobalHotKeys.shared.unregisterAll() }
+            .sink { [weak self] enabled, _, recording in
+                if enabled && recording == nil { self?.registerShortcuts() } else { GlobalHotKeys.shared.unregisterAll() }
             }
             .store(in: &cancellables)
     }
 
-    /// Control + Option + key, so we don't steal common Command shortcuts from other apps.
+    /// Registers each action's shortcut (custom or default). Turned-off ones are skipped.
     private func registerShortcuts() {
         let hotKeys = GlobalHotKeys.shared
         hotKeys.unregisterAll()
-        let mods = UInt32(controlKey | optionKey)
-        hotKeys.register(keyCode: UInt32(kVK_ANSI_P), modifiers: mods) { ScrollEngine.shared.toggle() }
-        hotKeys.register(keyCode: UInt32(kVK_ANSI_H), modifiers: mods) { PrompterSettings.shared.isPrompterVisible.toggle() }
-        hotKeys.register(keyCode: UInt32(kVK_ANSI_R), modifiers: mods) { ScrollEngine.shared.restart() }
-        hotKeys.register(keyCode: UInt32(kVK_ANSI_M), modifiers: mods) { MicrophoneMonitor.shared.isMuted.toggle() }
-        hotKeys.register(keyCode: UInt32(kVK_UpArrow), modifiers: mods) { ScrollEngine.shared.changeSpeed(by: 5) }
-        hotKeys.register(keyCode: UInt32(kVK_DownArrow), modifiers: mods) { ScrollEngine.shared.changeSpeed(by: -5) }
-        // Hands-free start: Shift-Command-Space shows the prompter and starts / pauses it.
-        hotKeys.register(keyCode: UInt32(kVK_Space), modifiers: UInt32(cmdKey | shiftKey)) {
-            PrompterSettings.shared.isPrompterVisible = true
-            ScrollEngine.shared.toggle()
+        for action in ShortcutAction.allCases {
+            let combo = settings.combo(for: action)
+            guard !combo.isNone else { continue }
+            hotKeys.register(keyCode: combo.keyCode, modifiers: combo.modifiers) { action.perform() }
         }
-        hotKeys.register(keyCode: UInt32(kVK_RightArrow), modifiers: mods) { ScrollEngine.shared.nextSegment() }
-        hotKeys.register(keyCode: UInt32(kVK_LeftArrow), modifiers: mods) { ScrollEngine.shared.previousSegment() }
     }
 }
 

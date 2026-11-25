@@ -125,6 +125,7 @@ final class PrompterSettings: ObservableObject {
         static let pauseOnHover = "pauseOnHover"
         static let showProgress = "showProgress"
         static let globalShortcuts = "globalShortcuts"
+        static let shortcuts = "shortcuts"
         static let placement = "placement"
         static let countdownSeconds = "countdownSeconds"
         static let targetMinutes = "targetMinutes"
@@ -317,6 +318,37 @@ final class PrompterSettings: ObservableObject {
     // MARK: Privacy & controls
     @Published var hideFromCapture: Bool { didSet { defaults.set(hideFromCapture, forKey: Key.hideFromCapture) } }
     @Published var globalShortcuts: Bool { didSet { defaults.set(globalShortcuts, forKey: Key.globalShortcuts) } }
+    /// Custom shortcuts by action. Actions not listed use their default.
+    @Published var shortcuts: [String: KeyCombo] {
+        didSet {
+            if let data = try? JSONEncoder().encode(shortcuts) { defaults.set(data, forKey: Key.shortcuts) }
+        }
+    }
+    /// The shortcut being recorded in Settings (global shortcuts pause meanwhile).
+    @Published var recordingShortcut: ShortcutAction?
+
+    func combo(for action: ShortcutAction) -> KeyCombo {
+        shortcuts[action.rawValue] ?? action.defaultCombo
+    }
+
+    /// Pass nil to go back to the default.
+    func setCombo(_ combo: KeyCombo?, for action: ShortcutAction) {
+        if let combo, combo != action.defaultCombo {
+            shortcuts[action.rawValue] = combo
+        } else {
+            shortcuts.removeValue(forKey: action.rawValue)
+        }
+    }
+
+    /// Which other action already uses this combo, if any.
+    func action(using combo: KeyCombo, except excluded: ShortcutAction) -> ShortcutAction? {
+        ShortcutAction.allCases.first { $0 != excluded && self.combo(for: $0).keyCode == combo.keyCode
+            && self.combo(for: $0).modifiers == combo.modifiers && !combo.isNone }
+    }
+
+    func resetAllShortcuts() {
+        shortcuts = [:]
+    }
 
     // MARK: Runtime state (not saved)
     @Published var isPrompterVisible = true
@@ -375,6 +407,12 @@ final class PrompterSettings: ObservableObject {
         showProgress = d.object(forKey: Key.showProgress) as? Bool ?? true
         hideFromCapture = d.object(forKey: Key.hideFromCapture) as? Bool ?? true
         globalShortcuts = d.object(forKey: Key.globalShortcuts) as? Bool ?? true
+        if let data = d.data(forKey: Key.shortcuts),
+           let saved = try? JSONDecoder().decode([String: KeyCombo].self, from: data) {
+            shortcuts = saved
+        } else {
+            shortcuts = [:]
+        }
         placement = PrompterPlacement(rawValue: d.string(forKey: Key.placement) ?? "") ?? .notch
         if let x = d.object(forKey: Key.floatingX) as? Double, let y = d.object(forKey: Key.floatingY) as? Double {
             floatingOrigin = CGPoint(x: x, y: y)

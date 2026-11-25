@@ -642,13 +642,19 @@ private struct PrivacyTab: View {
 
             Section("Keyboard shortcuts (work in any app)") {
                 Toggle("Enable global shortcuts", isOn: $settings.globalShortcuts)
-                ShortcutRow(keys: "⇧⌘Space", action: "Start / pause (hands-free start)")
-                ShortcutRow(keys: "⌃⌥P", action: "Play / pause")
-                ShortcutRow(keys: "⌃⌥H", action: "Show / hide prompter")
-                ShortcutRow(keys: "⌃⌥R", action: "Restart from top")
-                ShortcutRow(keys: "⌃⌥M", action: "Mute / unmute microphone")
-                ShortcutRow(keys: "⌃⌥↑ / ↓", action: "Faster / slower")
-                ShortcutRow(keys: "⌃⌥→ / ←", action: "Next / previous slide or chunk")
+                if settings.globalShortcuts {
+                    ForEach(ShortcutAction.allCases) { action in
+                        ShortcutRecorderRow(action: action, settings: settings)
+                    }
+                    HStack {
+                        Text("Click a shortcut, then press the new keys. Delete turns it off, Esc cancels.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Reset All") { settings.resetAllShortcuts() }
+                            .disabled(settings.shortcuts.isEmpty)
+                    }
+                }
             }
 
             Section("Siri & Shortcuts") {
@@ -664,20 +670,5 @@ private struct PrivacyTab: View {
             }
         }
         .formStyle(.grouped)
-    }
-}
-
-private struct ShortcutRow: View {
-    let keys: String
-    let action: LocalizedStringKey
-
-    var body: some View {
-        HStack {
-            Text(action)
-            Spacer()
-            Text(keys)
-                .font(.system(.body, design: .monospaced))
-                .foregroundStyle(.secondary)
-        }
     }
 }
