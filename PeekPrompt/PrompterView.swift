@@ -120,7 +120,7 @@ struct PrompterView: View {
     }
 
     private var statusColor: Color {
-        if settings.mode == .voiceActivated && mic.isMuted { return .red }
+        if settings.mode.usesMicrophone && mic.isMuted { return .red }
         if engine.isAdvancing { return .green }
         if engine.countdown != nil { return .orange }
         if engine.isRunning { return .yellow }
@@ -140,6 +140,7 @@ private struct ContentHeightKey: PreferenceKey {
 struct ScriptViewport: View {
     @ObservedObject var settings: PrompterSettings
     @ObservedObject var engine: ScrollEngine
+    @ObservedObject var tracker: SpeechTracker = .shared
 
     /// The line you're reading sits this far down the text area.
     private let readingLine: CGFloat = 0.3
@@ -148,7 +149,8 @@ struct ScriptViewport: View {
         GeometryReader { geo in
             ZStack(alignment: .topTrailing) {
                 Text(ScriptFormatter.attributed(settings.script, fontSize: settings.fontSize,
-                                                family: settings.fontFamily, theme: settings.theme))
+                                                family: settings.fontFamily, theme: settings.theme,
+                                                spokenUTF16Offset: settings.mode == .wordTracking ? tracker.spokenUTF16Offset : 0))
                     .lineSpacing(CGFloat(settings.lineSpacing))
                     .multilineTextAlignment(.center)
                     .frame(width: max(geo.size.width - 28, 50))
@@ -223,7 +225,8 @@ struct ScriptViewport: View {
 /// dimmed and italic so you don't read it aloud.
 enum ScriptFormatter {
     static func attributed(_ script: String, fontSize: Double,
-                           family: PrompterFont = .rounded, theme: PrompterTheme = .dark) -> AttributedString {
+                           family: PrompterFont = .rounded, theme: PrompterTheme = .dark,
+                           spokenUTF16Offset: Int = 0) -> AttributedString {
         let text = script.isEmpty ? "Open Settings and paste your script." : script
         var result = AttributedString(text)
         result.font = family.font(size: fontSize)
@@ -236,6 +239,16 @@ enum ScriptFormatter {
                   let attributedRange = Range(stringRange, in: result) else { continue }
             result[attributedRange].font = family.font(size: fontSize * 0.85, italic: true, weight: .regular)
             result[attributedRange].foregroundColor = theme.text.opacity(0.4)
+        }
+
+        // Word tracking: words you've already said fade back.
+        if spokenUTF16Offset > 0, !script.isEmpty {
+            let utf16 = text.utf16
+            let clamped = min(spokenUTF16Offset, utf16.count)
+            let end = String.Index(utf16Offset: clamped, in: text)
+            if let spokenRange = Range(text.startIndex..<end, in: result) {
+                result[spokenRange].foregroundColor = theme.text.opacity(0.35)
+            }
         }
         return result
     }
@@ -277,7 +290,7 @@ struct HoverControls: View {
 
             control("plus", help: "Faster") { engine.changeSpeed(by: 5) }
 
-            if settings.mode == .voiceActivated {
+            if settings.mode.usesMicrophone {
                 control(mic.isMuted ? "mic.slash.fill" : "mic.fill",
                         help: mic.isMuted ? "Unmute" : "Mute",
                         tint: mic.isMuted ? .red : .white) {
@@ -285,9 +298,8 @@ struct HoverControls: View {
                 }
             }
 
-            control(settings.mode == .classic ? "waveform" : "play.circle",
-                    help: settings.mode == .classic ? "Switch to Voice-Activated" : "Switch to Classic") {
-                settings.mode = settings.mode == .classic ? .voiceActivated : .classic
+            control(nextMode.symbol, help: "Switch to \(nextMode.title)") {
+                settings.mode = nextMode
             }
 
             control("gearshape.fill", help: "Settings") {
@@ -301,9 +313,15 @@ struct HoverControls: View {
         .environment(\.colorScheme, .dark)
     }
 
+    private var nextMode: ScrollMode {
+        let all = ScrollMode.allCases
+        let index = all.firstIndex(of: settings.mode) ?? 0
+        return all[(index + 1) % all.count]
+    }
+
     private var playSymbol: String {
         if engine.isRunning { return "pause.fill" }
-        return settings.mode == .voiceActivated ? "waveform.circle.fill" : "play.fill"
+        return settings.mode.usesMicrophone ? "waveform.circle.fill" : "play.fill"
     }
 
     private func control(_ symbol: String, help: String, size: CGFloat = 12, tint: Color = .white, action: @escaping () -> Void) -> some View {

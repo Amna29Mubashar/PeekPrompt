@@ -25,6 +25,9 @@ final class MicrophoneMonitor: ObservableObject {
         }
     }
 
+    /// Extra listener for raw audio (used by word tracking). Called on the audio thread.
+    var onBuffer: ((AVAudioPCMBuffer) -> Void)?
+
     /// Level that counts as speech. Set from the sensitivity slider.
     var threshold: CGFloat = 0.275
 
@@ -105,6 +108,7 @@ final class MicrophoneMonitor: ObservableObject {
 
     /// Runs on the audio thread.
     private func process(_ buffer: AVAudioPCMBuffer) {
+        onBuffer?(buffer)
         guard let samples = buffer.floatChannelData?[0] else { return }
         let count = vDSP_Length(buffer.frameLength)
         guard count > 0 else { return }

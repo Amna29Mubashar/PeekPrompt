@@ -5,6 +5,7 @@ import Combine
 enum ScrollMode: String, CaseIterable, Identifiable {
     case classic
     case voiceActivated
+    case wordTracking
 
     var id: String { rawValue }
 
@@ -12,13 +13,18 @@ enum ScrollMode: String, CaseIterable, Identifiable {
         switch self {
         case .classic: return "Classic"
         case .voiceActivated: return "Voice-Activated"
+        case .wordTracking: return "Word Tracking"
         }
     }
+
+    /// Modes that listen to the microphone.
+    var usesMicrophone: Bool { self != .classic }
 
     var detail: String {
         switch self {
         case .classic: return "Scrolls at a steady speed you choose."
         case .voiceActivated: return "Scrolls while you speak. Pauses when you go quiet or mute."
+        case .wordTracking: return "Listens to the words you say and follows along, even if you skip ahead. Uses Apple's speech recognition, on your Mac when supported."
         }
     }
 
@@ -26,6 +32,7 @@ enum ScrollMode: String, CaseIterable, Identifiable {
         switch self {
         case .classic: return "play.circle"
         case .voiceActivated: return "waveform.circle"
+        case .wordTracking: return "text.word.spacing"
         }
     }
 }

@@ -39,8 +39,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .receive(on: RunLoop.main)
             .sink { [weak self] mode, glow, visible, settingsOpen in
                 guard let self else { return }
-                let needed = (visible && (mode == .voiceActivated || glow)) || settingsOpen
+                let needed = (visible && (mode.usesMicrophone || glow)) || settingsOpen
                 if needed { self.mic.start() } else { self.mic.stop() }
+            }
+            .store(in: &cancellables)
+
+        // Word tracking needs the current script split into words.
+        settings.$script
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { script in SpeechTracker.shared.load(script: script) }
+            .store(in: &cancellables)
+
+        // Leaving word-tracking mode stops speech recognition.
+        settings.$mode
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { mode in
+                if mode != .wordTracking { SpeechTracker.shared.stop() }
+                if ScrollEngine.shared.isRunning { ScrollEngine.shared.pause() }
             }
             .store(in: &cancellables)
 
@@ -89,12 +106,12 @@ struct MenuContent: View {
 
         Divider()
 
-        Button(engine.isRunning ? "Pause" : (settings.mode == .voiceActivated ? "Start Listening" : "Play")) {
+        Button(engine.isRunning ? "Pause" : (settings.mode.usesMicrophone ? "Start Listening" : "Play")) {
             engine.toggle()
         }
         Button("Restart from Top") { engine.restart() }
 
-        if settings.mode == .voiceActivated {
+        if settings.mode.usesMicrophone {
             Button(mic.isMuted ? "Unmute Microphone" : "Mute Microphone") { mic.isMuted.toggle() }
         }
 

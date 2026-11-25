@@ -140,6 +140,7 @@ private struct ScriptTab: View {
 private struct ScrollingTab: View {
     @ObservedObject var settings: PrompterSettings
     @ObservedObject var mic: MicrophoneMonitor
+    @ObservedObject var tracker: SpeechTracker = .shared
 
     var body: some View {
         Form {
@@ -153,6 +154,11 @@ private struct ScrollingTab: View {
                 Text(settings.mode.detail)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                if settings.mode == .wordTracking, let error = tracker.errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
             }
 
             Section("Speed") {

@@ -24,6 +24,7 @@ final class ScrollEngine: ObservableObject {
 
     private let settings: PrompterSettings
     private let mic: MicrophoneMonitor
+    private let tracker = SpeechTracker.shared
     private var timer: Timer?
     private var countdownTimer: Timer?
     private var lastFrameTime: CFTimeInterval = 0
@@ -48,6 +49,10 @@ final class ScrollEngine: ObservableObject {
         if isFinished { offset = 0; elapsed = 0 }
         isRunning = true
         if settings.mode == .voiceActivated { mic.start() }
+        if settings.mode == .wordTracking {
+            if tracker.words.isEmpty { tracker.load(script: settings.script) }
+            tracker.start()
+        }
 
         // Count down only when starting from the top, so resuming mid-script is instant.
         if offset == 0 && settings.countdownSeconds > 0 {
@@ -60,6 +65,7 @@ final class ScrollEngine: ObservableObject {
     func pause() {
         isRunning = false
         isAdvancing = false
+        tracker.stop()
         cancelCountdown()
         stopTimer()
     }
@@ -95,6 +101,7 @@ final class ScrollEngine: ObservableObject {
     func restart() {
         offset = 0
         elapsed = 0
+        tracker.resetPosition()
         if isRunning { lastFrameTime = CACurrentMediaTime() }
     }
 
@@ -142,12 +149,29 @@ final class ScrollEngine: ObservableObject {
         elapsed += deltaTime
 
         let hoverPaused = isHovering && settings.pauseOnHover
+
+        // Word tracking: glide toward wherever your voice is in the script.
+        if settings.mode == .wordTracking {
+            guard !hoverPaused, contentHeight > 0 else {
+                if isAdvancing { isAdvancing = false }
+                return
+            }
+            let target = CGFloat(tracker.spokenFraction) * maxOffset
+            let gap = target - offset
+            let moving = abs(gap) > 0.5
+            if isAdvancing != moving { isAdvancing = moving }
+            if moving { offset += gap * CGFloat(min(1, deltaTime * 5)) }
+            return
+        }
+
         let shouldMove: Bool
         switch settings.mode {
         case .classic:
             shouldMove = !hoverPaused
         case .voiceActivated:
             shouldMove = !hoverPaused && !mic.isMuted && mic.isSpeaking
+        case .wordTracking:
+            shouldMove = false // handled above
         }
 
         if isAdvancing != shouldMove { isAdvancing = shouldMove }
