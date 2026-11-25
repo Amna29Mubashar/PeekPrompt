@@ -188,7 +188,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = PeekPrompt;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "MIT License";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Amna Mubashar. MIT License.";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Word Tracking listens to the words you say so the script can follow along. When your Mac supports it, recognition happens on-device.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "The phone remote lets you control PeekPrompt from your phone's browser on the same Wi-Fi.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PeekPrompt uses the microphone to scroll while you speak, follow your words and make the border glow. Nothing is recorded or saved.";
@@ -196,7 +197,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amnamubashar.PeekPrompt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -219,7 +220,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = PeekPrompt;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "MIT License";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2026 Amna Mubashar. MIT License.";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Word Tracking listens to the words you say so the script can follow along. When your Mac supports it, recognition happens on-device.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "The phone remote lets you control PeekPrompt from your phone's browser on the same Wi-Fi.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PeekPrompt uses the microphone to scroll while you speak, follow your words and make the border glow. Nothing is recorded or saved.";
@@ -227,7 +229,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.amnamubashar.PeekPrompt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
