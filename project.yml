@@ -1,0 +1,25 @@
+# Backup way to generate the Xcode project, in case PeekPrompt.xcodeproj ever breaks.
+#   brew install xcodegen
+#   xcodegen generate
+name: PeekPrompt
+options:
+  deploymentTarget:
+    macOS: "14.0"
+targets:
+  PeekPrompt:
+    type: application
+    platform: macOS
+    sources: [PeekPrompt]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.amnamubashar.PeekPrompt
+        MARKETING_VERSION: 0.1.0
+        CURRENT_PROJECT_VERSION: 1
+        SWIFT_VERSION: 5.0
+        CODE_SIGN_ENTITLEMENTS: PeekPrompt.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_LSUIElement: YES
+        INFOPLIST_KEY_CFBundleDisplayName: PeekPrompt
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: "PeekPrompt listens to your voice level so it can scroll while you speak and make the border glow. Audio never leaves your Mac and is not recorded."
