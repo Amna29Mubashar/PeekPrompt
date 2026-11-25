@@ -303,56 +303,102 @@ struct HoverControls: View {
     @ObservedObject var mic: MicrophoneMonitor
     @Environment(\.openSettings) private var openSettings
 
+    /// Name of the button under the pointer, shown above the bar.
+    @State private var hoveredLabel: String?
+
     var body: some View {
-        HStack(spacing: 10) {
-            control("backward.end.fill", help: String(localized: "Restart")) { engine.restart() }
+        VStack(spacing: 4) {
+            // Hover label: tells you what a button does before you click it.
+            Text(hoveredLabel ?? " ")
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 2)
+                .background(.black.opacity(hoveredLabel == nil ? 0 : 0.7), in: Capsule())
+                .opacity(hoveredLabel == nil ? 0 : 1)
+                .animation(.easeOut(duration: 0.12), value: hoveredLabel)
 
-            if engine.isSegmented {
-                control("chevron.left", help: String(localized: "Previous")) { engine.previousSegment() }
-                control("chevron.right", help: String(localized: "Next")) { engine.nextSegment() }
-            }
+            HStack(spacing: 8) {
+                // Navigation
+                control("backward.end.fill", label: String(localized: "Restart from Top")) { engine.restart() }
+                if engine.isSegmented {
+                    let kindPrevious = settings.presentationMode ? String(localized: "Previous Slide") : String(localized: "Previous Chunk")
+                    let kindNext = settings.presentationMode ? String(localized: "Next Slide") : String(localized: "Next Chunk")
+                    control("chevron.left", label: kindPrevious) { engine.previousSegment() }
+                    control("chevron.right", label: kindNext) { engine.nextSegment() }
+                }
 
-            control("minus", help: String(localized: "Slower")) { engine.changeSpeed(by: -5) }
+                // Speed (not used by Word Tracking, which follows your voice)
+                if settings.mode != .wordTracking {
+                    divider
+                    control("minus", label: String(localized: "Slower")) { engine.changeSpeed(by: -5) }
+                    Text("\(Int(settings.speed))")
+                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(.white.opacity(0.7))
+                        .frame(minWidth: 18)
+                        .onHover { hoveredLabel = $0 ? String(localized: "Scroll speed") : nil }
+                    control("plus", label: String(localized: "Faster")) { engine.changeSpeed(by: 5) }
+                }
 
-            control(playSymbol, help: engine.isRunning ? String(localized: "Pause") : String(localized: "Play"), size: 15) { engine.toggle() }
+                divider
 
-            control("plus", help: String(localized: "Faster")) { engine.changeSpeed(by: 5) }
+                // Play / pause: the same in every mode
+                control(engine.isRunning ? "pause.fill" : "play.fill",
+                        label: engine.isRunning
+                            ? String(localized: "Pause")
+                            : (settings.mode.usesMicrophone ? String(localized: "Start Listening") : String(localized: "Play")),
+                        size: 15) { engine.toggle() }
 
-            if settings.mode.usesMicrophone {
-                control(mic.isMuted ? "mic.slash.fill" : "mic.fill",
-                        help: mic.isMuted ? String(localized: "Unmute") : String(localized: "Mute"),
-                        tint: mic.isMuted ? .red : .white) {
-                    mic.isMuted.toggle()
+                divider
+
+                // Microphone & mode
+                if settings.mode.usesMicrophone {
+                    control(mic.isMuted ? "mic.slash.fill" : "mic.fill",
+                            label: mic.isMuted ? String(localized: "Unmute Microphone") : String(localized: "Mute Microphone"),
+                            tint: mic.isMuted ? .red : .white) {
+                        mic.isMuted.toggle()
+                    }
+                }
+
+                Menu {
+                    Picker("Scrolling Mode", selection: $settings.mode) {
+                        ForEach(ScrollMode.allCases) { mode in
+                            Label(mode.title, systemImage: mode.symbol).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.inline)
+                } label: {
+                    Image(systemName: settings.mode.symbol)
+                        .font(.system(size: 12, weight: .semibold))
+                        .frame(width: 20, height: 20)
+                }
+                .menuStyle(.borderlessButton)
+                .menuIndicator(.hidden)
+                .fixedSize()
+                .foregroundStyle(.white)
+                .onHover { hoveredLabel = $0 ? String(localized: "Mode: \(settings.mode.title)") : nil }
+
+                control("gearshape.fill", label: String(localized: "Settings")) {
+                    NSApp.activate()
+                    openSettings()
                 }
             }
-
-            control(nextMode.symbol, help: String(localized: "Switch to \(nextMode.title)")) {
-                settings.mode = nextMode
-            }
-
-            control("gearshape.fill", help: String(localized: "Settings")) {
-                NSApp.activate()
-                openSettings()
-            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(.ultraThinMaterial, in: Capsule())
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background(.ultraThinMaterial, in: Capsule())
         .environment(\.colorScheme, .dark)
     }
 
-    private var nextMode: ScrollMode {
-        let all = ScrollMode.allCases
-        let index = all.firstIndex(of: settings.mode) ?? 0
-        return all[(index + 1) % all.count]
+    private var divider: some View {
+        Rectangle()
+            .fill(.white.opacity(0.2))
+            .frame(width: 1, height: 14)
     }
 
-    private var playSymbol: String {
-        if engine.isRunning { return "pause.fill" }
-        return settings.mode.usesMicrophone ? "waveform.circle.fill" : "play.fill"
-    }
-
-    private func control(_ symbol: String, help: String, size: CGFloat = 12, tint: Color = .white, action: @escaping () -> Void) -> some View {
+    private func control(_ symbol: String, label: String, size: CGFloat = 12, tint: Color = .white,
+                         action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
                 .font(.system(size: size, weight: .semibold))
@@ -361,7 +407,11 @@ struct HoverControls: View {
         }
         .buttonStyle(.plain)
         .foregroundStyle(tint)
-        .help(help)
+        .help(label)
+        .accessibilityLabel(label)
+        .onHover { hovering in
+            if hovering { hoveredLabel = label } else if hoveredLabel == label { hoveredLabel = nil }
+        }
     }
 }
 
