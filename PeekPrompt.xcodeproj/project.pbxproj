@@ -179,6 +179,7 @@
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "MIT License";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Word Tracking listens to the words you say so the script can follow along. When your Mac supports it, recognition happens on-device.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "The phone remote lets you control PeekPrompt from your phone's browser on the same Wi-Fi.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PeekPrompt listens to your voice level so it can scroll while you speak and make the border glow. Audio never leaves your Mac and is not recorded.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -207,6 +208,7 @@
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "MIT License";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Word Tracking listens to the words you say so the script can follow along. When your Mac supports it, recognition happens on-device.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "The phone remote lets you control PeekPrompt from your phone's browser on the same Wi-Fi.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "PeekPrompt listens to your voice level so it can scroll while you speak and make the border glow. Audio never leaves your Mac and is not recorded.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

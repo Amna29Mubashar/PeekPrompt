@@ -359,6 +359,7 @@ private struct LabeledSlider: View {
 
 private struct PrivacyTab: View {
     @ObservedObject var settings: PrompterSettings
+    @ObservedObject var remote: RemoteServer = .shared
 
     var body: some View {
         Form {
@@ -372,6 +373,46 @@ private struct PrivacyTab: View {
                 """)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            }
+
+            Section("Phone remote") {
+                Toggle("Control PeekPrompt from your phone", isOn: Binding(
+                    get: { remote.isRunning },
+                    set: { $0 ? remote.start() : remote.stop() }
+                ))
+
+                if remote.isRunning, let url = remote.address {
+                    HStack(alignment: .top, spacing: 14) {
+                        if let qr = RemoteServer.qrCode(for: url) {
+                            Image(nsImage: qr)
+                                .interpolation(.none)
+                                .resizable()
+                                .frame(width: 120, height: 120)
+                                .padding(6)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 8))
+                        }
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Scan with your phone's camera. Your phone must be on the same Wi-Fi as this Mac.")
+                                .font(.caption)
+                            Text(url.absoluteString)
+                                .font(.system(.caption, design: .monospaced))
+                                .textSelection(.enabled)
+                            Button("Copy Link") {
+                                NSPasteboard.general.clearContents()
+                                NSPasteboard.general.setString(url.absoluteString, forType: .string)
+                            }
+                            Text("The link contains a secret code and changes each time you turn the remote on.")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } else if let error = remote.errorMessage {
+                    Text(error).font(.caption).foregroundStyle(.red)
+                } else {
+                    Text("Turn this on to get a QR code. macOS may ask to let PeekPrompt find devices on your local network. Allow it.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             Section("Keyboard shortcuts (work in any app)") {
