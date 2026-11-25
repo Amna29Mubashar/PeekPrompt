@@ -8,31 +8,37 @@ A teleprompter that lives in your MacBook's notch, right under the camera, so yo
 
 <p align="center"><img src="docs/demo.gif" width="640" alt="PeekPrompt counting down, then scrolling as you speak with a voice-reactive glow"></p>
 
+## Free and Pro
+
+This repository is the **free, open-source edition** of PeekPrompt. It's complete on its own: build it in Xcode and use it as long as you like.
+
+**PeekPrompt Pro** is the edition on the Mac App Store, published by UV Apps. It's the same app plus extra features, marked *(Pro)* below, unlocked with a low-cost subscription. Pro features aren't included in this repository.
+
 ## Features
 
 - **Sits under the notch.** It tucks into the notch with the same curved "ears", and slides down when shown.
-- **Three scrolling modes**
+- **Scrolling modes**
   - **Classic:** scrolls at a steady speed you choose.
-  - **Voice-Activated:** scrolls only while you're speaking, and pauses when you go quiet or mute the mic. Turn on **Auto speed** and it matches how fast you talk.
-  - **Word Tracking:** listens to the words you say and follows along, even if you skip ahead. Words you've read fade back. Uses Apple's speech recognition, on-device when your Mac supports it.
+  - **Voice-Activated:** scrolls only while you're speaking, and pauses when you go quiet or mute the mic. With **Auto speed** *(Pro)* it matches how fast you talk.
+  - **Word Tracking *(Pro)*:** listens to the words you say and follows along, even if you skip ahead. Words you've read fade back. Uses Apple's speech recognition, on-device when your Mac supports it.
 - **Voice-reactive glowing border.** A rotating gradient outline that brightens and thickens as you talk. Four color palettes.
 - **Hidden from screen sharing.** It stays out of Zoom, Meet, Teams, QuickTime and screenshots (see the note on Loom below).
 - **Put it anywhere.** Prefer it somewhere else? Switch Position to "Anywhere" and drag it. It becomes a rounded card and remembers where you left it.
 - **Right-click menu** for play, restart, position, hide, Settings and Quit.
-- **Script library with folders.** Drag scripts into any order. That order is also the play queue.
-- **End of script:** stop, start over, or move straight on to the next script.
-- **Presentation mode.** One slide at a time. PowerPoint speaker notes import slide by slide, and you switch slides with a shortcut, the hover buttons, your phone or Siri.
-- **Memorize mode.** Practice a paragraph at a time while words are gradually hidden, down to first letters only.
-- **Magic Polish.** Rewrite rough notes into a natural, spoken-style script with Apple Intelligence, on your Mac.
+- **Script library.** Keep several scripts and drag them into any order. **Folders and a play queue** *(Pro)* let you organize them and read them back to back.
+- **End of script:** stop or start over. Pro can also move straight on to the next script.
+- **Presentation mode** *(Pro)***.** One slide at a time. PowerPoint speaker notes import slide by slide, and you switch slides with a shortcut, the hover buttons, your phone or Siri.
+- **Memorize mode** *(Pro)***.** Practice a paragraph at a time while words are gradually hidden, down to first letters only.
+- **Magic Polish** *(Pro)***.** Rewrite rough notes into a natural, spoken-style script with Apple Intelligence, on your Mac.
 - **Dictation.** Speak your script and it's typed for you.
-- **Import** .txt, .md, .rtf, Word (.docx), **PDF**, or the **speaker notes from a PowerPoint** (.pptx).
+- **Import** .txt, .md, .rtf and Word (.docx). **PDF** and **PowerPoint speaker notes** (.pptx) *(Pro)*.
 - **3-2-1 countdown** before you start.
-- **Pacing timer.** Set a target length and see whether you're ahead or behind.
+- **Pacing timer** *(Pro)***.** Set a target length and see whether you're ahead or behind.
 - **Reading-line highlight.** The line you're reading is bright, and the rest is dimmed.
 - **Fonts and themes.** Rounded, standard, serif, monospaced or **OpenDyslexic**, in dark or light, with adjustable background opacity.
 - **Hands-free start.** Press ⇧⌘Space, or say "Hey Siri, start PeekPrompt". Also available in the Shortcuts app.
 - **10 languages:** English, Spanish, French, German, Italian, Portuguese (Brazil), Japanese, Korean, Chinese (Simplified) and Arabic.
-- **Phone remote.** Scan a QR code and control play, speed and more from your phone's browser (same Wi-Fi). No app needed.
+- **Phone remote** *(Pro)***.** Scan a QR code and control play, speed and more from your phone's browser (same Wi-Fi). No app needed.
 - **Hover to pause**, and scroll with your trackpad to jump around.
 - **Cues.** Anything in `[square brackets]` is dimmed and italic, so you know not to read it aloud.
 - **Global shortcuts** that work from any app, and you can change every one of them.
@@ -59,16 +65,16 @@ Open **Settings → Script**.
 
 ### Dictation and Magic Polish
 - **Dictate:** click **Dictate** under the editor and start talking. Your words are added to the end of the script. Click **Stop Dictating** when you're done.
-- **Magic Polish:** click **Magic Polish** to rewrite the script so it's easier to say out loud. You can make it sound natural, make it shorter, or turn rough notes into a script. Nothing changes until you choose **Replace Script** or **Save as New Script**. On Macs with Apple Intelligence (macOS 26 or later) the rewrite runs on-device. On other Macs, a basic cleanup removes formatting and spells out shorthand like "e.g." and "%".
+- **Magic Polish** *(Pro)***:** click **Magic Polish** to rewrite the script so it's easier to say out loud. You can make it sound natural, make it shorter, or turn rough notes into a script. Nothing changes until you choose **Replace Script** or **Save as New Script**. On Macs with Apple Intelligence (macOS 26 or later) the rewrite runs on-device. On other Macs, a basic cleanup removes formatting and spells out shorthand like "e.g." and "%".
 
-### Folders and the play queue
+### Folders and the play queue (Pro)
 Click **+** → **New Folder…** to group scripts. Right-click a script → **Move to Folder**, and drag scripts to reorder them. The order in the list is the play queue: set **Settings → Scrolling → At the end of a script** to **Play the next script** to read several scripts back to back.
 
 ### Importing a script
 Click **Import** at the bottom of the script list and pick one or more files:
 - **Text and Markdown** (.txt, .md), **Rich Text** (.rtf), **Word** (.docx, .doc), **OpenDocument** (.odt) or **web pages** (.html)
-- **PDF** (.pdf): the text of every page
-- **PowerPoint** (.pptx): PeekPrompt pulls out the **speaker notes** for each slide, in order, with a `[Slide N]` cue between them. If a slide has no notes, it uses the text on the slide.
+- **PDF** (.pdf) *(Pro)*: the text of every page
+- **PowerPoint** (.pptx) *(Pro)*: PeekPrompt pulls out the **speaker notes** for each slide, in order, with a `[Slide N]` cue between them. If a slide has no notes, it uses the text on the slide.
 
 Each file becomes a new script named after the file.
 
@@ -89,7 +95,7 @@ Open **Settings → Scrolling**, or click the mode button in the hover controls 
 
 **Word Tracking** uses Apple's speech recognition. When your Mac supports it, it runs entirely on-device. The first time, macOS asks for permission.
 
-### Presenting slides and memorizing
+### Presenting slides and memorizing (Pro)
 <p align="center"><img src="docs/screens/presenting.png" width="560" alt="Presentation mode and Memorize mode settings"></p>
 
 In **Settings → Scrolling → Presenting & practice**:
@@ -100,7 +106,7 @@ In **Settings → Scrolling → Presenting & practice**:
 <p align="center"><img src="docs/screens/speed.png" width="560" alt="Scroll speed, auto speed, pause on hover, target length, end-of-script and countdown settings"></p>
 
 - **Countdown:** pressing Play from the top shows 3… 2… 1… first, so you have time to look at the camera. Change it to 5 or 10 seconds, or turn it off, in Settings → Scrolling.
-- **Pacing timer:** set a **Target length**, for example 2 min. The area to the right of the notch then shows elapsed time against your target, and whether you're **on time** (green), **behind** (orange) or **ahead** (blue).
+- **Pacing timer** *(Pro)*: set a **Target length**, for example 2 min. The area to the right of the notch then shows elapsed time against your target, and whether you're **on time** (green), **behind** (orange) or **ahead** (blue).
 
 ### Making it comfortable to read
 <p align="center"><img src="docs/screens/text.png" width="560" alt="Text settings: font, theme, background opacity, font size, line spacing and reading-line highlight"></p>
@@ -129,7 +135,7 @@ On a screen without a notch, it hangs from the top center, right below where a w
 
 By default it sits right under the camera for the best eye contact. To put it somewhere else, go to **Settings → Appearance → Position → Anywhere**, or right-click → **Move Anywhere**, then drag it. It remembers where you leave it. **Reset Position** or **Move Back Under Notch** undoes it.
 
-### Controlling it from your phone
+### Controlling it from your phone (Pro)
 1. Go to **Settings → Privacy & Keys → Phone remote** and turn it on.
 2. Scan the QR code with your phone's camera. Your phone must be on the **same Wi-Fi** as your Mac.
 3. You get big buttons for play/pause, restart, back/ahead, slower/faster, mode, mute and show/hide, plus a progress bar.
