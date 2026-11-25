@@ -72,6 +72,14 @@ struct PrompterView: View {
             Button(settings.placement == .notch ? "Move Anywhere (drag to place)" : "Move Back Under Notch") {
                 settings.placement = settings.placement == .notch ? .floating : .notch
             }
+            Picker("Script", selection: Binding(
+                get: { settings.currentScriptID },
+                set: { settings.selectScript($0) }
+            )) {
+                ForEach(settings.scripts) { script in
+                    Text(script.title).tag(script.id)
+                }
+            }
             Button("Hide Prompter") { settings.isPrompterVisible = false }
             Button("Settings…") {
                 NSApp.activate()

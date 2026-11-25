@@ -62,6 +62,13 @@ enum GlowPalette: String, CaseIterable, Identifiable {
     }
 }
 
+/// One saved script in the library.
+struct Script: Identifiable, Codable, Equatable {
+    var id = UUID()
+    var title: String
+    var body: String
+}
+
 /// Every user setting, saved automatically to UserDefaults.
 final class PrompterSettings: ObservableObject {
     static let shared = PrompterSettings()
@@ -70,6 +77,8 @@ final class PrompterSettings: ObservableObject {
 
     private enum Key {
         static let script = "script"
+        static let scripts = "scripts"
+        static let currentScriptID = "currentScriptID"
         static let mode = "mode"
         static let speed = "speed"
         static let fontSize = "fontSize"
@@ -93,8 +102,62 @@ final class PrompterSettings: ObservableObject {
         static let floatingY = "floatingY"
     }
 
-    // MARK: Script
-    @Published var script: String { didSet { defaults.set(script, forKey: Key.script) } }
+    // MARK: Script library
+    /// All saved scripts.
+    @Published var scripts: [Script] { didSet { saveScripts() } }
+    @Published var currentScriptID: UUID { didSet { defaults.set(currentScriptID.uuidString, forKey: Key.currentScriptID) } }
+    /// Text of the script on screen. Editing it updates the matching library entry.
+    @Published var script: String {
+        didSet {
+            defaults.set(script, forKey: Key.script)
+            if let index = scripts.firstIndex(where: { $0.id == currentScriptID }), scripts[index].body != script {
+                scripts[index].body = script
+            }
+        }
+    }
+
+    var currentTitle: String {
+        scripts.first(where: { $0.id == currentScriptID })?.title ?? "Untitled"
+    }
+
+    func selectScript(_ id: UUID) {
+        guard let chosen = scripts.first(where: { $0.id == id }) else { return }
+        currentScriptID = id
+        if script != chosen.body { script = chosen.body }
+    }
+
+    @discardableResult
+    func addScript(title: String = "Untitled Script", body: String = "") -> UUID {
+        let new = Script(title: title, body: body)
+        scripts.append(new)
+        selectScript(new.id)
+        return new.id
+    }
+
+    func duplicateScript(_ id: UUID) {
+        guard let original = scripts.first(where: { $0.id == id }) else { return }
+        addScript(title: original.title + " copy", body: original.body)
+    }
+
+    func renameScript(_ id: UUID, to title: String) {
+        guard let index = scripts.firstIndex(where: { $0.id == id }) else { return }
+        scripts[index].title = title
+    }
+
+    /// Keeps at least one script so the prompter always has something to show.
+    func deleteScript(_ id: UUID) {
+        guard scripts.count > 1, let index = scripts.firstIndex(where: { $0.id == id }) else { return }
+        scripts.remove(at: index)
+        if id == currentScriptID {
+            selectScript(scripts[min(index, scripts.count - 1)].id)
+        }
+    }
+
+    private func saveScripts() {
+        if let data = try? JSONEncoder().encode(scripts) {
+            defaults.set(data, forKey: Key.scripts)
+        }
+    }
 
     // MARK: Scrolling
     @Published var mode: ScrollMode { didSet { defaults.set(mode.rawValue, forKey: Key.mode) } }
@@ -156,7 +219,22 @@ final class PrompterSettings: ObservableObject {
 
     private init() {
         let d = UserDefaults.standard
-        script = d.string(forKey: Key.script) ?? PrompterSettings.sampleScript
+        // Load the library. First launch (or upgrading from a single script) creates one entry.
+        var loaded: [Script] = []
+        if let data = d.data(forKey: Key.scripts),
+           let decoded = try? JSONDecoder().decode([Script].self, from: data) {
+            loaded = decoded
+        }
+        if loaded.isEmpty {
+            let existing = d.string(forKey: Key.script)
+            loaded = [Script(title: existing == nil ? "Welcome" : "My Script",
+                             body: existing ?? PrompterSettings.sampleScript)]
+        }
+        scripts = loaded
+        let savedID = d.string(forKey: Key.currentScriptID).flatMap(UUID.init(uuidString:))
+        let current = loaded.first(where: { $0.id == savedID }) ?? loaded[0]
+        currentScriptID = current.id
+        script = current.body
         mode = ScrollMode(rawValue: d.string(forKey: Key.mode) ?? "") ?? .classic
         speed = d.object(forKey: Key.speed) as? Double ?? 30
         voiceSensitivity = d.object(forKey: Key.voiceSensitivity) as? Double ?? 0.5
@@ -181,6 +259,7 @@ final class PrompterSettings: ObservableObject {
         } else {
             floatingOrigin = nil
         }
+        saveScripts() // make sure a first-launch library is stored
     }
 
     static let sampleScript = """

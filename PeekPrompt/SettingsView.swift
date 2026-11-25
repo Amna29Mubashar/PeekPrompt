@@ -36,7 +36,7 @@ struct SettingsView: View {
             }
             .padding(12)
         }
-        .frame(width: 520, height: 500)
+        .frame(width: 640, height: 540)
         .onAppear {
             settings.isSettingsOpen = true
             // Menu bar apps open Settings behind other windows unless we step forward.
@@ -56,21 +56,66 @@ private struct ScriptTab: View {
     @ObservedObject var settings: PrompterSettings
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            TextEditor(text: $settings.script)
-                .font(.system(size: 13, design: .rounded))
-                .scrollContentBackground(.hidden)
-                .padding(8)
-                .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
+        HStack(spacing: 12) {
+            // Library
+            VStack(spacing: 0) {
+                List(selection: Binding<UUID?>(
+                    get: { settings.currentScriptID },
+                    set: { if let id = $0 { settings.selectScript(id) } }
+                )) {
+                    ForEach(settings.scripts) { script in
+                        Text(script.title.isEmpty ? "Untitled" : script.title)
+                            .lineLimit(1)
+                            .tag(script.id)
+                            .contextMenu {
+                                Button("Duplicate") { settings.duplicateScript(script.id) }
+                                Button("Delete", role: .destructive) { settings.deleteScript(script.id) }
+                                    .disabled(settings.scripts.count < 2)
+                            }
+                    }
+                }
+                .listStyle(.sidebar)
 
-            HStack {
-                Text("\(settings.wordCount) words · about \(readingTime) to read")
-                Spacer()
-                Text("Tip: [cues] in brackets are dimmed")
+                Divider()
+                HStack(spacing: 2) {
+                    Button { settings.addScript() } label: { Image(systemName: "plus") }
+                        .help("New script")
+                    Button { settings.deleteScript(settings.currentScriptID) } label: { Image(systemName: "minus") }
+                        .help("Delete script")
+                        .disabled(settings.scripts.count < 2)
+                    Spacer()
+                }
+                .buttonStyle(.borderless)
+                .padding(6)
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .frame(width: 160)
+            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
+
+            // Editor
+            VStack(alignment: .leading, spacing: 8) {
+                TextField("Title", text: Binding(
+                    get: { settings.currentTitle },
+                    set: { settings.renameScript(settings.currentScriptID, to: $0) }
+                ))
+                .textFieldStyle(.plain)
+                .font(.title3.weight(.semibold))
+
+                TextEditor(text: $settings.script)
+                    .font(.system(size: 13, design: .rounded))
+                    .scrollContentBackground(.hidden)
+                    .padding(8)
+                    .background(Color(nsColor: .textBackgroundColor), in: RoundedRectangle(cornerRadius: 8))
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(.quaternary))
+
+                HStack {
+                    Text("\(settings.wordCount) words · about \(readingTime) to read")
+                    Spacer()
+                    Text("[cues] in brackets are dimmed")
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
         }
         .padding()
     }

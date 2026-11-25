@@ -98,6 +98,15 @@ struct MenuContent: View {
             Button(mic.isMuted ? "Unmute Microphone" : "Mute Microphone") { mic.isMuted.toggle() }
         }
 
+        Picker("Script", selection: Binding(
+            get: { settings.currentScriptID },
+            set: { settings.selectScript($0) }
+        )) {
+            ForEach(settings.scripts) { script in
+                Text(script.title).tag(script.id)
+            }
+        }
+
         Picker("Scrolling Mode", selection: $settings.mode) {
             ForEach(ScrollMode.allCases) { mode in
                 Text(mode.title).tag(mode)
