@@ -30,6 +30,21 @@ enum ScrollMode: String, CaseIterable, Identifiable {
     }
 }
 
+/// Where the prompter lives on screen.
+enum PrompterPlacement: String, CaseIterable, Identifiable {
+    case notch
+    case floating
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .notch: return "Under the notch"
+        case .floating: return "Anywhere"
+        }
+    }
+}
+
 /// Color sets for the voice-reactive glow.
 enum GlowPalette: String, CaseIterable, Identifiable {
     case aurora, sunset, ocean, mono
@@ -69,6 +84,9 @@ final class PrompterSettings: ObservableObject {
         static let pauseOnHover = "pauseOnHover"
         static let showProgress = "showProgress"
         static let globalShortcuts = "globalShortcuts"
+        static let placement = "placement"
+        static let floatingX = "floatingX"
+        static let floatingY = "floatingY"
     }
 
     // MARK: Script
@@ -93,6 +111,21 @@ final class PrompterSettings: ObservableObject {
     /// 0.5 = subtle ... 2 = very bold.
     @Published var glowStrength: Double { didSet { defaults.set(glowStrength, forKey: Key.glowStrength) } }
     @Published var showProgress: Bool { didSet { defaults.set(showProgress, forKey: Key.showProgress) } }
+
+    // MARK: Position
+    @Published var placement: PrompterPlacement { didSet { defaults.set(placement.rawValue, forKey: Key.placement) } }
+    /// Bottom-left corner of the prompter in Anywhere mode (screen coordinates). nil = not moved yet.
+    @Published var floatingOrigin: CGPoint? {
+        didSet {
+            if let floatingOrigin {
+                defaults.set(Double(floatingOrigin.x), forKey: Key.floatingX)
+                defaults.set(Double(floatingOrigin.y), forKey: Key.floatingY)
+            } else {
+                defaults.removeObject(forKey: Key.floatingX)
+                defaults.removeObject(forKey: Key.floatingY)
+            }
+        }
+    }
 
     // MARK: Privacy & controls
     @Published var hideFromCapture: Bool { didSet { defaults.set(hideFromCapture, forKey: Key.hideFromCapture) } }
@@ -128,6 +161,12 @@ final class PrompterSettings: ObservableObject {
         showProgress = d.object(forKey: Key.showProgress) as? Bool ?? true
         hideFromCapture = d.object(forKey: Key.hideFromCapture) as? Bool ?? true
         globalShortcuts = d.object(forKey: Key.globalShortcuts) as? Bool ?? true
+        placement = PrompterPlacement(rawValue: d.string(forKey: Key.placement) ?? "") ?? .notch
+        if let x = d.object(forKey: Key.floatingX) as? Double, let y = d.object(forKey: Key.floatingY) as? Double {
+            floatingOrigin = CGPoint(x: x, y: y)
+        } else {
+            floatingOrigin = nil
+        }
     }
 
     static let sampleScript = """

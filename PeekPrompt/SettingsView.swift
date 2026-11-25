@@ -181,6 +181,29 @@ private struct AppearanceTab: View {
 
     var body: some View {
         Form {
+            Section("Position") {
+                Picker("Show prompter", selection: $settings.placement) {
+                    ForEach(PrompterPlacement.allCases) { placement in
+                        Text(placement.title).tag(placement)
+                    }
+                }
+                .pickerStyle(.segmented)
+
+                if settings.placement == .floating {
+                    HStack {
+                        Text("Drag the prompter to move it. Keep it close to your camera for the best eye contact.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Reset Position") { settings.floatingOrigin = nil }
+                    }
+                } else {
+                    Text("Sits right under the camera, so you look straight at your audience.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section("Text") {
                 LabeledSlider(title: "Font size", value: $settings.fontSize, range: 10...36, unit: "pt")
                 LabeledSlider(title: "Line spacing", value: $settings.lineSpacing, range: 0...16, unit: "pt")

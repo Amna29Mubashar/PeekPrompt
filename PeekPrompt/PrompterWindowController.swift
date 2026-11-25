@@ -9,6 +9,8 @@ final class NotchLayout: ObservableObject {
     @Published var topInset: CGFloat = 32
     /// Width of the physical notch. 0 if the screen has none.
     @Published var notchWidth: CGFloat = 0
+    /// True in "Anywhere" mode: rounded card, draggable.
+    @Published var isFloating = false
     private init() {}
 }
 
@@ -41,7 +43,14 @@ final class NotchPanel: NSPanel {
 final class PrompterHostingView<Content: View>: NSHostingView<Content> {
     var onHoverChange: ((Bool) -> Void)?
     var onScroll: ((CGFloat) -> Void)?
+    /// Returns true when the prompter may be dragged around (Anywhere mode).
+    var canDrag: (() -> Bool)?
+    /// Called with the window's new origin after the user finishes dragging.
+    var onDragEnded: ((NSPoint) -> Void)?
     private var trackingArea: NSTrackingArea?
+    private var dragStartMouse: NSPoint?
+    private var dragStartOrigin: NSPoint?
+    private var didDrag = false
 
     required init(rootView: Content) {
         super.init(rootView: rootView)
@@ -78,6 +87,38 @@ final class PrompterHostingView<Content: View>: NSHostingView<Content> {
         // Trackpads report precise points; mouse wheels report "lines".
         let multiplier: CGFloat = event.hasPreciseScrollingDeltas ? 1 : 12
         onScroll?(-event.scrollingDeltaY * multiplier)
+    }
+
+    // MARK: Dragging (Anywhere mode)
+
+    override func mouseDown(with event: NSEvent) {
+        if canDrag?() == true, let window {
+            dragStartMouse = NSEvent.mouseLocation
+            dragStartOrigin = window.frame.origin
+            didDrag = false
+        }
+        super.mouseDown(with: event)
+    }
+
+    override func mouseDragged(with event: NSEvent) {
+        guard let startMouse = dragStartMouse, let startOrigin = dragStartOrigin, let window else {
+            super.mouseDragged(with: event)
+            return
+        }
+        let mouse = NSEvent.mouseLocation
+        window.setFrameOrigin(NSPoint(x: startOrigin.x + mouse.x - startMouse.x,
+                                      y: startOrigin.y + mouse.y - startMouse.y))
+        didDrag = true
+    }
+
+    override func mouseUp(with event: NSEvent) {
+        if didDrag, let window {
+            onDragEnded?(window.frame.origin)
+        }
+        dragStartMouse = nil
+        dragStartOrigin = nil
+        didDrag = false
+        super.mouseUp(with: event)
     }
 
     /// Lets the hover buttons respond to the first click, without activating the app.
@@ -118,6 +159,8 @@ final class PrompterWindowController {
         hosting.sizingOptions = []
         hosting.onHoverChange = { hovering in engine.isHovering = hovering }
         hosting.onScroll = { delta in engine.nudge(by: delta) }
+        hosting.canDrag = { settings.placement == .floating }
+        hosting.onDragEnded = { origin in settings.floatingOrigin = origin }
         panel.contentView = hosting
 
         applyCaptureSetting(settings.hideFromCapture)
@@ -130,6 +173,25 @@ final class PrompterWindowController {
         settings.$width.combineLatest(settings.$height)
             .receive(on: RunLoop.main)
             .sink { [weak self] _, _ in self?.reposition(animated: false) }
+            .store(in: &cancellables)
+
+        settings.$placement
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                // Wait one runloop so settings.placement already holds the new value.
+                DispatchQueue.main.async { self?.reposition(animated: true) }
+            }
+            .store(in: &cancellables)
+
+        // "Reset position" in Settings clears the saved spot.
+        settings.$floatingOrigin
+            .dropFirst()
+            .filter { $0 == nil }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                DispatchQueue.main.async { self?.reposition(animated: true) }
+            }
             .store(in: &cancellables)
 
         settings.$isPrompterVisible
@@ -157,13 +219,31 @@ final class PrompterWindowController {
     // MARK: Positioning
 
     private func targetFrame(on screen: NSScreen) -> NSRect {
-        let topInset = screen.hasNotch ? screen.safeAreaInsets.top : 8
+        let floating = settings.placement == .floating
+        if layout.isFloating != floating { layout.isFloating = floating }
+
+        let topInset: CGFloat = floating ? 24 : (screen.hasNotch ? screen.safeAreaInsets.top : 8)
         if layout.topInset != topInset { layout.topInset = topInset }
-        let notchWidth = screen.notchWidth
+        let notchWidth = floating ? 0 : screen.notchWidth
         if layout.notchWidth != notchWidth { layout.notchWidth = notchWidth }
 
         let width = CGFloat(settings.width)
         let height = topInset + CGFloat(settings.height)
+
+        if floating {
+            // Use the saved spot if it's still on a connected screen.
+            if let origin = settings.floatingOrigin {
+                let frame = NSRect(origin: origin, size: NSSize(width: width, height: height))
+                if NSScreen.screens.contains(where: { $0.visibleFrame.intersects(frame) }) {
+                    return frame
+                }
+            }
+            // First time: just below the menu bar, centered.
+            let visible = screen.visibleFrame
+            return NSRect(x: visible.midX - width / 2, y: visible.maxY - height - 40,
+                          width: width, height: height)
+        }
+
         return NSRect(
             x: screen.frame.midX - width / 2,
             y: screen.frame.maxY - height,
@@ -182,7 +262,9 @@ final class PrompterWindowController {
         guard let screen = NSScreen.preferredForPrompter else { return }
         let finalFrame = targetFrame(on: screen)
         var startFrame = finalFrame
-        startFrame.origin.y = screen.frame.maxY
+        if settings.placement == .notch {
+            startFrame.origin.y = screen.frame.maxY // slide down out of the notch
+        }
 
         panel.alphaValue = 0
         panel.setFrame(startFrame, display: false)
@@ -203,7 +285,9 @@ final class PrompterWindowController {
             return
         }
         var endFrame = panel.frame
-        endFrame.origin.y = screen.frame.maxY
+        if settings.placement == .notch {
+            endFrame.origin.y = screen.frame.maxY // slide back up into the notch
+        }
 
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = animationDuration

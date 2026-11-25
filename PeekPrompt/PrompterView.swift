@@ -8,7 +8,15 @@ struct PrompterView: View {
     @ObservedObject var layout: NotchLayout
     @Environment(\.openSettings) private var openSettings
 
-    private let shape = NotchShape(topCornerRadius: 10, bottomCornerRadius: 22)
+    /// Notch outline under the notch; a plain rounded card in Anywhere mode.
+    private var shape: AnyShape {
+        layout.isFloating
+            ? AnyShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            : AnyShape(NotchShape(topCornerRadius: notchEar, bottomCornerRadius: 22))
+    }
+
+    /// Width of the inward-curving "ears" at the top corners (none when floating).
+    private var notchEar: CGFloat { layout.isFloating ? 0 : 10 }
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -18,7 +26,7 @@ struct PrompterView: View {
                 statusRow
                     .frame(height: layout.topInset)
                 ScriptViewport(settings: settings, engine: engine)
-                    .padding(.horizontal, shape.topCornerRadius)
+                    .padding(.horizontal, notchEar)
             }
 
             if settings.glowEnabled && mic.isRunning {
@@ -43,6 +51,9 @@ struct PrompterView: View {
             Button(engine.isRunning ? "Pause" : "Play") { engine.toggle() }
             Button("Restart from Top") { engine.restart() }
             Divider()
+            Button(settings.placement == .notch ? "Move Anywhere (drag to place)" : "Move Back Under Notch") {
+                settings.placement = settings.placement == .notch ? .floating : .notch
+            }
             Button("Hide Prompter") { settings.isPrompterVisible = false }
             Button("Settings…") {
                 NSApp.activate()
@@ -78,11 +89,11 @@ struct PrompterView: View {
                 }
             }
         }
-        .padding(.horizontal, shape.topCornerRadius + 14)
+        .padding(.horizontal, notchEar + 14)
     }
 
     private var showsEars: Bool {
-        layout.notchWidth > 0 && CGFloat(settings.width) > layout.notchWidth + 70
+        layout.isFloating || (layout.notchWidth > 0 && CGFloat(settings.width) > layout.notchWidth + 70)
     }
 
     private var statusColor: Color {

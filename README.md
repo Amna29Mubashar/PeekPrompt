@@ -10,6 +10,8 @@ A teleprompter that lives in your MacBook's notch, right under the camera, so yo
   - **Voice-Activated:** scrolls only while you're speaking, and pauses when you go quiet or mute the mic.
 - **Voice-reactive glowing border.** A rotating gradient outline that brightens and thickens as you talk. Four color palettes.
 - **Hidden from screen sharing.** It stays out of Zoom, Meet, Teams, QuickTime and screenshots (see the note on Loom below).
+- **Put it anywhere.** Prefer it somewhere else? Switch Position to "Anywhere" and drag it. It becomes a rounded card and remembers where you left it.
+- **Right-click menu** for play, restart, position, hide, Settings and Quit.
 - **Hover to pause**, and scroll with your trackpad to jump around.
 - **Cues.** Anything in `[square brackets]` is dimmed and italic, so you know not to read it aloud.
 - **Global shortcuts** that work from any app.
