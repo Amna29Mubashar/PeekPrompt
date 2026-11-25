@@ -103,6 +103,7 @@ final class PrompterSettings: ObservableObject {
         static let placement = "placement"
         static let countdownSeconds = "countdownSeconds"
         static let targetMinutes = "targetMinutes"
+        static let autoSpeed = "autoSpeed"
         static let highlightReadingLine = "highlightReadingLine"
         static let fontFamily = "fontFamily"
         static let theme = "theme"
@@ -177,6 +178,8 @@ final class PrompterSettings: ObservableObject {
     /// Seconds of 3-2-1 countdown before scrolling starts from the top. 0 = off.
     @Published var countdownSeconds: Int { didSet { defaults.set(countdownSeconds, forKey: Key.countdownSeconds) } }
 
+    /// Voice-Activated mode: match scroll speed to how fast you're talking.
+    @Published var autoSpeed: Bool { didSet { defaults.set(autoSpeed, forKey: Key.autoSpeed) } }
     /// Target length of the talk in minutes, for the pacing timer. 0 = no target.
     @Published var targetMinutes: Double { didSet { defaults.set(targetMinutes, forKey: Key.targetMinutes) } }
 
@@ -250,6 +253,7 @@ final class PrompterSettings: ObservableObject {
         speed = d.object(forKey: Key.speed) as? Double ?? 30
         voiceSensitivity = d.object(forKey: Key.voiceSensitivity) as? Double ?? 0.5
         pauseOnHover = d.object(forKey: Key.pauseOnHover) as? Bool ?? true
+        autoSpeed = d.object(forKey: Key.autoSpeed) as? Bool ?? false
         targetMinutes = d.object(forKey: Key.targetMinutes) as? Double ?? 0
         countdownSeconds = d.object(forKey: Key.countdownSeconds) as? Int ?? 3
         fontSize = d.object(forKey: Key.fontSize) as? Double ?? 16

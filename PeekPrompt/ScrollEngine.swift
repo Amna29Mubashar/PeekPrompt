@@ -48,7 +48,10 @@ final class ScrollEngine: ObservableObject {
     func play() {
         if isFinished { offset = 0; elapsed = 0 }
         isRunning = true
-        if settings.mode == .voiceActivated { mic.start() }
+        if settings.mode == .voiceActivated {
+            mic.start()
+            if settings.autoSpeed { tracker.start() } // only to measure your pace
+        }
         if settings.mode == .wordTracking {
             if tracker.words.isEmpty { tracker.load(script: settings.script) }
             tracker.start()
@@ -114,6 +117,19 @@ final class ScrollEngine: ObservableObject {
         settings.speed = min(max(settings.speed + delta, 5), 150)
     }
 
+    // MARK: Auto speed
+
+    /// Points per second to scroll right now. With Auto speed on in Voice-Activated mode,
+    /// this follows your measured words-per-minute; otherwise it's the slider value.
+    var effectiveSpeed: CGFloat {
+        if settings.mode == .voiceActivated, settings.autoSpeed,
+           let wpm = tracker.wordsPerMinute, !tracker.words.isEmpty, contentHeight > 0 {
+            let pointsPerWord = contentHeight / CGFloat(tracker.words.count)
+            return min(max(CGFloat(wpm / 60) * pointsPerWord, 5), 150)
+        }
+        return CGFloat(settings.speed)
+    }
+
     // MARK: Pacing
 
     /// How far ahead (+) or behind (−) schedule you are, in seconds. nil without a target.
@@ -177,7 +193,7 @@ final class ScrollEngine: ObservableObject {
         if isAdvancing != shouldMove { isAdvancing = shouldMove }
         guard shouldMove, contentHeight > 0 else { return }
 
-        offset = min(offset + CGFloat(settings.speed * deltaTime), maxOffset)
+        offset = min(offset + effectiveSpeed * CGFloat(deltaTime), maxOffset)
         if offset >= maxOffset { pause() }
     }
 }

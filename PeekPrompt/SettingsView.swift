@@ -169,6 +169,12 @@ private struct ScrollingTab: View {
                 } maximumValueLabel: {
                     Image(systemName: "hare")
                 }
+                Toggle("Auto speed: match how fast I talk (Voice-Activated mode)", isOn: $settings.autoSpeed)
+                if settings.autoSpeed {
+                    Text(autoSpeedCaption)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Toggle("Pause while the pointer is over the prompter", isOn: $settings.pauseOnHover)
                 Picker("Target length (pacing timer)", selection: $settings.targetMinutes) {
                     Text("No target").tag(0.0)
@@ -210,6 +216,13 @@ private struct ScrollingTab: View {
             }
         }
         .formStyle(.grouped)
+    }
+
+    private var autoSpeedCaption: String {
+        if let wpm = tracker.wordsPerMinute {
+            return "You're speaking at about \(Int(wpm)) words per minute. The slider is used until PeekPrompt has heard a few seconds of you."
+        }
+        return "Start reading in Voice-Activated mode. After a few seconds, PeekPrompt measures your pace and takes over from the speed slider."
     }
 
     private var meterCaption: String {
