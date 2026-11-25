@@ -28,6 +28,67 @@ A teleprompter that lives in your MacBook's notch, right under the camera, so yo
 - **Live mic meter** in Settings, so you can tune voice sensitivity to your room.
 - **Private.** The microphone is only measured for loudness. Nothing is recorded, transcribed or sent anywhere.
 
+## How to use
+
+### Getting started
+After launch, PeekPrompt slides down from your notch with a sample script. There's no Dock icon. Everything is on the prompter itself:
+- **Hover** over the prompter to show the controls: restart, slower, play/pause, faster, mute, switch mode, and ⚙️ Settings.
+- **Right-click** the prompter for a quick menu: play, restart, move, switch script, hide, Settings and Quit.
+- There's also a menu bar icon, but on crowded MacBook menu bars macOS may hide it behind the notch.
+
+### Writing and managing scripts
+Open **Settings → Script**.
+- The list on the left is your **script library**. Click **+** to add a script, **−** to delete one, or right-click a script to duplicate it.
+- Rename a script by editing the title above the text.
+- Put stage directions in square brackets, like `[pause]` or `[smile]`. They show dimmed and italic, so you know not to read them out.
+- The footer shows the word count and roughly how long the script takes to read, at about 150 words per minute.
+- Switch scripts any time by right-clicking the prompter → **Script**.
+
+### Importing a script
+Click **Import** at the bottom of the script list and pick one or more files:
+- **Text and Markdown** (.txt, .md), **Rich Text** (.rtf), **Word** (.docx, .doc), **OpenDocument** (.odt) or **web pages** (.html)
+- **PowerPoint** (.pptx): PeekPrompt pulls out the **speaker notes** for each slide, in order, with a `[Slide N]` cue between them. If a slide has no notes, it uses the text on the slide.
+
+Each file becomes a new script named after the file.
+
+### Choosing how it scrolls
+Open **Settings → Scrolling**, or click the mode button in the hover controls to cycle through the modes.
+
+| Mode | Best for | How it works |
+|---|---|---|
+| **Classic** | Steady reading, rehearsals | Scrolls at the speed you set. Use − and + while reading, or ⌃⌥↑ / ⌃⌥↓. |
+| **Voice-Activated** | Natural talks with pauses | Moves only while you're speaking and waits when you stop. Turn on **Auto speed** and it measures your words per minute and matches it. |
+| **Word Tracking** | Reading word for word | Listens to *what* you say and keeps your place, even if you skip a line. Words you've already said fade back. |
+
+**Tuning voice detection:** in Settings → Scrolling, watch the live mic bar while you talk. It should cross the white line when you speak and stay below it when you're silent. If it doesn't, move **Sensitivity** toward Whisper or Loud.
+
+**Word Tracking** uses Apple's speech recognition. When your Mac supports it, it runs entirely on-device. The first time, macOS asks for permission.
+
+### Before you start: countdown and pacing
+- **Countdown:** pressing Play from the top shows 3… 2… 1… first, so you have time to look at the camera. Change it to 5 or 10 seconds, or turn it off, in Settings → Scrolling.
+- **Pacing timer:** set a **Target length**, for example 2 min. The area to the right of the notch then shows elapsed time against your target, and whether you're **on time** (green), **behind** (orange) or **ahead** (blue).
+
+### Making it comfortable to read
+Open **Settings → Appearance**.
+- **Font:** Rounded, Standard, Serif, Monospaced, or **OpenDyslexic**, which is designed for readers with dyslexia.
+- **Theme:** Dark or Light.
+- **Font size, line spacing, width and height.**
+- **Highlight the line you're reading:** the current line is full brightness and the rest is dimmed, so your eyes don't wander.
+- **Voice glow:** a gradient border that brightens and thickens as you talk. Choose a color set and adjust **Glow strength**.
+
+### Moving the prompter
+By default it sits right under the camera for the best eye contact. To put it somewhere else, go to **Settings → Appearance → Position → Anywhere**, or right-click → **Move Anywhere**, then drag it. It remembers where you leave it. **Reset Position** or **Move Back Under Notch** undoes it.
+
+### Controlling it from your phone
+1. Go to **Settings → Privacy & Keys → Phone remote** and turn it on.
+2. Scan the QR code with your phone's camera. Your phone must be on the **same Wi-Fi** as your Mac.
+3. You get big buttons for play/pause, restart, back/ahead, slower/faster, mode, mute and show/hide, plus a progress bar.
+
+The link contains a secret code that changes every time you turn the remote on, so nobody else on the network can control your prompter. macOS may ask to let PeekPrompt find devices on your local network; allow it.
+
+### Hiding it from recordings
+**Settings → Privacy & Keys → Hide prompter from screenshots, screen sharing and recordings** is on by default. See the note on Loom below.
+
 ## Keyboard shortcuts
 
 | Shortcut | Action |
