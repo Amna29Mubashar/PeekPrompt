@@ -1573,6 +1573,122 @@
         }
       }
     },
+    "Click a shortcut, then press the new keys. Delete turns it off, Esc cancels.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haz clic en un atajo y pulsa las nuevas teclas. Suprimir lo desactiva; Esc cancela."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cliquez sur un raccourci, puis appuyez sur les nouvelles touches. Supprimer le désactive, Échap annule."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klicke auf einen Kurzbefehl und drücke die neuen Tasten. Löschen schaltet ihn aus, Esc bricht ab."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai clic su un’abbreviazione, poi premi i nuovi tasti. Elimina la disattiva, Esc annulla."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique em um atalho e pressione as novas teclas. Apagar o desativa, Esc cancela."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ショートカットをクリックして新しいキーを押します。Deleteでオフ、Escでキャンセルします。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "단축키를 클릭한 다음 새 키를 누르세요. Delete는 끄기, Esc는 취소입니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点按快捷键后按下新的按键。按 Delete 关闭,按 Esc 取消。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انقر على اختصار ثم اضغط المفاتيح الجديدة. Delete لإيقافه وEsc للإلغاء."
+          }
+        }
+      }
+    },
+    "Click, then press the new shortcut. Delete turns it off, Esc cancels.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haz clic y pulsa el nuevo atajo. Suprimir lo desactiva; Esc cancela."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cliquez, puis appuyez sur le nouveau raccourci. Supprimer le désactive, Échap annule."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klicke und drücke den neuen Kurzbefehl. Löschen schaltet ihn aus, Esc bricht ab."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai clic, poi premi la nuova abbreviazione. Elimina la disattiva, Esc annulla."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique e pressione o novo atalho. Apagar o desativa, Esc cancela."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クリックしてから新しいショートカットを押します。Deleteでオフ、Escでキャンセルします。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클릭한 다음 새 단축키를 누르세요. Delete는 끄기, Esc는 취소입니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "点按后按下新的快捷键。按 Delete 关闭,按 Esc 取消。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انقر ثم اضغط الاختصار الجديد. Delete لإيقافه وEsc للإلغاء."
+          }
+        }
+      }
+    },
     "Colors": {
       "localizations": {
         "es": {
@@ -3777,6 +3893,64 @@
         }
       }
     },
+    "Include ⌃, ⌥ or ⌘ in the shortcut.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluye ⌃, ⌥ o ⌘ en el atajo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluez ⌃, ⌥ ou ⌘ dans le raccourci."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwende ⌃, ⌥ oder ⌘ im Kurzbefehl."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Includi ⌃, ⌥ o ⌘ nell’abbreviazione."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inclua ⌃, ⌥ ou ⌘ no atalho."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ショートカットには⌃、⌥、⌘のいずれかを含めてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "단축키에 ⌃, ⌥ 또는 ⌘를 포함하세요."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "快捷键需包含 ⌃、⌥ 或 ⌘。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أضِف ⌃ أو ⌥ أو ⌘ إلى الاختصار."
+          }
+        }
+      }
+    },
     "Jumps back to the top of the script.": {
       "localizations": {
         "es": {
@@ -4933,6 +5107,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "نقل إلى مجلد"
+          }
+        }
+      }
+    },
+    "Moved from “%@”.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movido desde «%@»."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacé depuis « %@ »."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von „%@“ übernommen."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spostato da “%@”."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movido de “%@”."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「%@」から移動しました。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”에서 옮겨졌습니다."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已从“%@”移过来。"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "نُقل من ”%@“."
           }
         }
       }
@@ -7199,6 +7431,64 @@
         }
       }
     },
+    "Press keys…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulsa las teclas…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appuyez sur les touches…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasten drücken …"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premi i tasti…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pressione as teclas…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キーを押してください…"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "키를 누르세요…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按下按键…"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اضغط المفاتيح…"
+          }
+        }
+      }
+    },
     "Previous": {
       "localizations": {
         "es": {
@@ -7721,6 +8011,64 @@
         }
       }
     },
+    "Reset All": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restablecer todo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout réinitialiser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle zurücksetzen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ripristina tutto"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redefinir tudo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すべてリセット"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "모두 재설정"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部重置"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة تعيين الكل"
+          }
+        }
+      }
+    },
     "Reset Position": {
       "localizations": {
         "es": {
@@ -7775,6 +8123,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "إعادة تعيين الموضع"
+          }
+        }
+      }
+    },
+    "Reset to default": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restablecer valor predeterminado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rétablir la valeur par défaut"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf Standard zurücksetzen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ripristina predefinito"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redefinir para o padrão"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "デフォルトに戻す"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기본값으로 재설정"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复默认"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إعادة التعيين إلى الافتراضي"
           }
         }
       }

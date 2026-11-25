@@ -35,7 +35,7 @@ A teleprompter that lives in your MacBook's notch, right under the camera, so yo
 - **Phone remote.** Scan a QR code and control play, speed and more from your phone's browser (same Wi-Fi). No app needed.
 - **Hover to pause**, and scroll with your trackpad to jump around.
 - **Cues.** Anything in `[square brackets]` is dimmed and italic, so you know not to read it aloud.
-- **Global shortcuts** that work from any app.
+- **Global shortcuts** that work from any app, and you can change every one of them.
 - **Live mic meter** in Settings, so you can tune voice sensitivity to your room.
 - **Private.** No accounts, no tracking, and recordings are never saved. Voice levels are measured on your Mac. Word Tracking and Dictation use Apple's speech recognition, which runs on-device when your Mac supports it.
 
@@ -140,6 +140,8 @@ The link contains a secret code that changes every time you turn the remote on, 
 ## Keyboard shortcuts
 
 <p align="center"><img src="docs/screens/shortcuts.png" width="520" alt="Global keyboard shortcuts settings"></p>
+
+These are the defaults. To change one, go to **Settings → Privacy & Keys → Keyboard shortcuts**, click it, and press new keys. Delete turns a shortcut off, and **Reset All** restores the defaults.
 
 | Shortcut | Action |
 |---|---|
