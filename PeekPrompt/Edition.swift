@@ -49,6 +49,7 @@ enum ProSlot {
     case speedExtras         // Auto speed and pacing timer rows
     case privacySection      // phone remote
     case menuItems           // extra items in the menu bar menu
+    case settingsFooter      // "Upgrade to Pro" / "Pro is active" at the bottom of Settings
 }
 
 enum Edition {

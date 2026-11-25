@@ -28,9 +28,13 @@ struct SettingsView: View {
                     settings.isPrompterVisible.toggle()
                 }
                 Spacer()
-                Text("Tip: right-click the prompter for quick actions")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                if let footer = Edition.pro?.view(for: .settingsFooter) {
+                    footer
+                } else {
+                    Text("Tip: right-click the prompter for quick actions")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Spacer()
                 Button("Quit PeekPrompt", role: .destructive) { NSApp.terminate(nil) }
             }
