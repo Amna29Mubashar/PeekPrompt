@@ -27,6 +27,8 @@ final class ScrollEngine: ObservableObject {
     private let tracker = SpeechTracker.shared
     private var timer: Timer?
     private var countdownTimer: Timer?
+    /// True during the short pause at the end before looping / moving on.
+    private var isHandlingEnd = false
     private var lastFrameTime: CFTimeInterval = 0
 
     var maxOffset: CGFloat { max(0, contentHeight) }
@@ -117,6 +119,35 @@ final class ScrollEngine: ObservableObject {
         settings.speed = min(max(settings.speed + delta, 5), 150)
     }
 
+    // MARK: End of script
+
+    /// Stop, start over, or move on to the next script, depending on the setting.
+    private func reachedEnd() {
+        guard !isHandlingEnd else { return }
+        switch settings.endAction {
+        case .stop:
+            pause()
+        case .loop, .next:
+            let nextID = settings.endAction == .next ? settings.nextScriptID : nil
+            if settings.endAction == .next && nextID == nil {
+                pause() // last script in the list
+                return
+            }
+            // Leave the last line on screen for a moment before continuing.
+            isHandlingEnd = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                guard let self else { return }
+                self.isHandlingEnd = false
+                guard self.isRunning else { return }
+                if let nextID {
+                    self.settings.selectScript(nextID) // the view restarts from the top
+                    self.tracker.load(script: self.settings.script)
+                }
+                self.restart()
+            }
+        }
+    }
+
     // MARK: Auto speed
 
     /// Points per second to scroll right now. With Auto speed on in Voice-Activated mode,
@@ -177,6 +208,9 @@ final class ScrollEngine: ObservableObject {
             let moving = abs(gap) > 0.5
             if isAdvancing != moving { isAdvancing = moving }
             if moving { offset += gap * CGFloat(min(1, deltaTime * 5)) }
+            if !tracker.words.isEmpty, tracker.spokenWordCount >= tracker.words.count {
+                reachedEnd()
+            }
             return
         }
 
@@ -194,6 +228,6 @@ final class ScrollEngine: ObservableObject {
         guard shouldMove, contentHeight > 0 else { return }
 
         offset = min(offset + effectiveSpeed * CGFloat(deltaTime), maxOffset)
-        if offset >= maxOffset { pause() }
+        if offset >= maxOffset { reachedEnd() }
     }
 }

@@ -20,7 +20,7 @@ struct PrompterView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            settings.theme.background
+            settings.theme.background.opacity(settings.backgroundOpacity)
 
             VStack(spacing: 0) {
                 statusRow

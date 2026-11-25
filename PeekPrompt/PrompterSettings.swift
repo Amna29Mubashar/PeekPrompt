@@ -52,6 +52,21 @@ enum PrompterPlacement: String, CaseIterable, Identifiable {
     }
 }
 
+/// What happens when the script reaches the end.
+enum EndAction: String, CaseIterable, Identifiable {
+    case stop, loop, next
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .stop: return "Stop"
+        case .loop: return "Start over"
+        case .next: return "Play the next script"
+        }
+    }
+}
+
 /// Color sets for the voice-reactive glow.
 enum GlowPalette: String, CaseIterable, Identifiable {
     case aurora, sunset, ocean, mono
@@ -104,6 +119,8 @@ final class PrompterSettings: ObservableObject {
         static let countdownSeconds = "countdownSeconds"
         static let targetMinutes = "targetMinutes"
         static let autoSpeed = "autoSpeed"
+        static let endAction = "endAction"
+        static let backgroundOpacity = "backgroundOpacity"
         static let highlightReadingLine = "highlightReadingLine"
         static let fontFamily = "fontFamily"
         static let theme = "theme"
@@ -143,6 +160,13 @@ final class PrompterSettings: ObservableObject {
         return new.id
     }
 
+    /// The script after the current one in the library, or nil at the end.
+    var nextScriptID: UUID? {
+        guard let index = scripts.firstIndex(where: { $0.id == currentScriptID }),
+              index + 1 < scripts.count else { return nil }
+        return scripts[index + 1].id
+    }
+
     func duplicateScript(_ id: UUID) {
         guard let original = scripts.first(where: { $0.id == id }) else { return }
         addScript(title: original.title + " copy", body: original.body)
@@ -180,6 +204,7 @@ final class PrompterSettings: ObservableObject {
 
     /// Voice-Activated mode: match scroll speed to how fast you're talking.
     @Published var autoSpeed: Bool { didSet { defaults.set(autoSpeed, forKey: Key.autoSpeed) } }
+    @Published var endAction: EndAction { didSet { defaults.set(endAction.rawValue, forKey: Key.endAction) } }
     /// Target length of the talk in minutes, for the pacing timer. 0 = no target.
     @Published var targetMinutes: Double { didSet { defaults.set(targetMinutes, forKey: Key.targetMinutes) } }
 
@@ -194,6 +219,8 @@ final class PrompterSettings: ObservableObject {
     /// 0.5 = subtle ... 2 = very bold.
     @Published var glowStrength: Double { didSet { defaults.set(glowStrength, forKey: Key.glowStrength) } }
     @Published var fontFamily: PrompterFont { didSet { defaults.set(fontFamily.rawValue, forKey: Key.fontFamily) } }
+    /// How solid the prompter's background is (0.3 = see-through, 1 = solid).
+    @Published var backgroundOpacity: Double { didSet { defaults.set(backgroundOpacity, forKey: Key.backgroundOpacity) } }
     @Published var theme: PrompterTheme { didSet { defaults.set(theme.rawValue, forKey: Key.theme) } }
     /// Brighten the line you're reading and dim the rest.
     @Published var highlightReadingLine: Bool { didSet { defaults.set(highlightReadingLine, forKey: Key.highlightReadingLine) } }
@@ -253,6 +280,8 @@ final class PrompterSettings: ObservableObject {
         speed = d.object(forKey: Key.speed) as? Double ?? 30
         voiceSensitivity = d.object(forKey: Key.voiceSensitivity) as? Double ?? 0.5
         pauseOnHover = d.object(forKey: Key.pauseOnHover) as? Bool ?? true
+        endAction = EndAction(rawValue: d.string(forKey: Key.endAction) ?? "") ?? .stop
+        backgroundOpacity = d.object(forKey: Key.backgroundOpacity) as? Double ?? 1
         autoSpeed = d.object(forKey: Key.autoSpeed) as? Bool ?? false
         targetMinutes = d.object(forKey: Key.targetMinutes) as? Double ?? 0
         countdownSeconds = d.object(forKey: Key.countdownSeconds) as? Int ?? 3
