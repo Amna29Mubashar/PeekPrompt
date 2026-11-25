@@ -483,9 +483,24 @@ private struct MicLevelMeter: View {
 
 private struct AppearanceTab: View {
     @ObservedObject var settings: PrompterSettings
+    @State private var displayOptions = DisplayOption.all
 
     var body: some View {
         Form {
+            Section("Display") {
+                Picker("Show on", selection: $settings.displayChoice) {
+                    ForEach(displayOptions, id: \.choice.storageValue) { option in
+                        Text(option.name).tag(option.choice)
+                    }
+                }
+                Text("On a screen without a notch, the prompter hangs from the top center, right under where a webcam usually sits.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
+                displayOptions = DisplayOption.all // a monitor was plugged in or out
+            }
+
             Section("Position") {
                 Picker("Show prompter", selection: $settings.placement) {
                     ForEach(PrompterPlacement.allCases) { placement in

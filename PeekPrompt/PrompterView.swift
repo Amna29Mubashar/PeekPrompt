@@ -88,6 +88,13 @@ struct PrompterView: View {
                     Text(script.title).tag(script.id)
                 }
             }
+            if NSScreen.screens.count > 1 {
+                Picker("Display", selection: $settings.displayChoice) {
+                    ForEach(DisplayOption.all, id: \.choice.storageValue) { option in
+                        Text(option.name).tag(option.choice)
+                    }
+                }
+            }
             Button("Hide Prompter") { settings.isPrompterVisible = false }
             Button("Settings…") {
                 NSApp.activate()
@@ -131,7 +138,7 @@ struct PrompterView: View {
     }
 
     private var showsEars: Bool {
-        layout.isFloating || (layout.notchWidth > 0 && CGFloat(settings.width) > layout.notchWidth + 70)
+        layout.isFloating || layout.notchWidth == 0 || CGFloat(settings.width) > layout.notchWidth + 70
     }
 
     private var statusColor: Color {

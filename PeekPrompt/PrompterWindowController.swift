@@ -23,8 +23,25 @@ extension NSScreen {
     }
 
     /// The built-in MacBook screen if it has a notch, otherwise the main screen.
-    static var preferredForPrompter: NSScreen? {
+    static var automaticForPrompter: NSScreen? {
         NSScreen.screens.first(where: { $0.hasNotch }) ?? NSScreen.main ?? NSScreen.screens.first
+    }
+
+    /// The screen to use for a Display setting.
+    static func forPrompter(_ choice: DisplayChoice) -> NSScreen? {
+        switch choice {
+        case .automatic:
+            return automaticForPrompter
+        case .followMouse:
+            let mouse = NSEvent.mouseLocation
+            return NSScreen.screens.first(where: { NSMouseInRect(mouse, $0.frame, false) }) ?? automaticForPrompter
+        case .display(let id):
+            return NSScreen.screens.first(where: { $0.displayID == id }) ?? automaticForPrompter
+        }
+    }
+
+    var displayID: UInt32? {
+        (deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? NSNumber)?.uint32Value
     }
 }
 
@@ -184,6 +201,20 @@ final class PrompterWindowController {
             }
             .store(in: &cancellables)
 
+        // Display setting changed: move there (a floating prompter starts fresh on that screen).
+        settings.$displayChoice
+            .dropFirst()
+            .removeDuplicates()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                if self.settings.placement == .floating { self.settings.floatingOrigin = nil }
+                self.updateMouseFollowing()
+                DispatchQueue.main.async { self.reposition(animated: false) }
+            }
+            .store(in: &cancellables)
+        updateMouseFollowing()
+
         // "Reset position" in Settings clears the saved spot.
         settings.$floatingOrigin
             .dropFirst()
@@ -218,11 +249,32 @@ final class PrompterWindowController {
 
     // MARK: Positioning
 
+    private var currentScreen: NSScreen? { NSScreen.forPrompter(settings.displayChoice) }
+    private var mouseTimer: Timer?
+    private var lastScreenID: UInt32?
+
+    /// In "Follow mouse" mode, hop to the pointer's screen when it changes.
+    private func updateMouseFollowing() {
+        mouseTimer?.invalidate()
+        mouseTimer = nil
+        guard settings.displayChoice == .followMouse else { return }
+        let timer = Timer(timeInterval: 0.4, repeats: true) { [weak self] _ in
+            guard let self, self.settings.isPrompterVisible,
+                  let screen = self.currentScreen, screen.displayID != self.lastScreenID else { return }
+            if self.settings.placement == .floating { self.settings.floatingOrigin = nil }
+            self.reposition(animated: false)
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        mouseTimer = timer
+    }
+
     private func targetFrame(on screen: NSScreen) -> NSRect {
         let floating = settings.placement == .floating
         if layout.isFloating != floating { layout.isFloating = floating }
 
-        let topInset: CGFloat = floating ? 24 : (screen.hasNotch ? screen.safeAreaInsets.top : 8)
+        // No notch (e.g. an external monitor): hang from the top like a virtual notch,
+        // with room for the status row.
+        let topInset: CGFloat = floating ? 24 : (screen.hasNotch ? screen.safeAreaInsets.top : 24)
         if layout.topInset != topInset { layout.topInset = topInset }
         let notchWidth = floating ? 0 : screen.notchWidth
         if layout.notchWidth != notchWidth { layout.notchWidth = notchWidth }
@@ -253,13 +305,15 @@ final class PrompterWindowController {
     }
 
     private func reposition(animated: Bool) {
-        guard settings.isPrompterVisible, let screen = NSScreen.preferredForPrompter else { return }
+        guard settings.isPrompterVisible, let screen = currentScreen else { return }
+        lastScreenID = screen.displayID
         panel.setFrame(targetFrame(on: screen), display: true, animate: animated)
     }
 
     /// Slides down out of the notch.
     private func show() {
-        guard let screen = NSScreen.preferredForPrompter else { return }
+        guard let screen = currentScreen else { return }
+        lastScreenID = screen.displayID
         let finalFrame = targetFrame(on: screen)
         var startFrame = finalFrame
         if settings.placement == .notch {
@@ -280,7 +334,7 @@ final class PrompterWindowController {
 
     /// Slides back up into the notch.
     private func hide() {
-        guard let screen = NSScreen.preferredForPrompter else {
+        guard let screen = currentScreen else {
             panel.orderOut(nil)
             return
         }
@@ -298,5 +352,28 @@ final class PrompterWindowController {
             guard let self, !self.settings.isPrompterVisible else { return }
             self.panel.orderOut(nil)
         })
+    }
+}
+
+/// An entry in the Display menu.
+struct DisplayOption {
+    let choice: DisplayChoice
+    let name: String
+
+    static var all: [DisplayOption] {
+        var options = [
+            DisplayOption(choice: .automatic, name: String(localized: "Automatic (MacBook screen)")),
+            DisplayOption(choice: .followMouse, name: String(localized: "Follow the mouse pointer"))
+        ]
+        for screen in NSScreen.screens {
+            guard let id = screen.displayID else { continue }
+            options.append(DisplayOption(choice: .display(id), name: screen.localizedName))
+        }
+        // Keep a chosen screen in the list even while it's unplugged.
+        let current = PrompterSettings.shared.displayChoice
+        if case .display = current, !options.contains(where: { $0.choice == current }) {
+            options.append(DisplayOption(choice: current, name: String(localized: "Disconnected display")))
+        }
+        return options
     }
 }

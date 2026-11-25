@@ -67,6 +67,33 @@ enum EndAction: String, CaseIterable, Identifiable {
     }
 }
 
+/// Which screen the prompter appears on.
+enum DisplayChoice: Equatable {
+    /// The MacBook's notch screen if there is one, otherwise the main screen.
+    case automatic
+    /// Whichever screen the mouse pointer is on.
+    case followMouse
+    /// A specific screen, by its display ID. Falls back to automatic if it's disconnected.
+    case display(UInt32)
+
+    var storageValue: String {
+        switch self {
+        case .automatic: return "auto"
+        case .followMouse: return "mouse"
+        case .display(let id): return "id:\(id)"
+        }
+    }
+
+    init(storageValue: String?) {
+        switch storageValue {
+        case "mouse": self = .followMouse
+        case let value? where value.hasPrefix("id:"):
+            self = UInt32(value.dropFirst(3)).map { .display($0) } ?? .automatic
+        default: self = .automatic
+        }
+    }
+}
+
 /// Color sets for the voice-reactive glow.
 enum GlowPalette: String, CaseIterable, Identifiable {
     case aurora, sunset, ocean, mono
@@ -127,6 +154,7 @@ final class PrompterSettings: ObservableObject {
         static let globalShortcuts = "globalShortcuts"
         static let shortcuts = "shortcuts"
         static let placement = "placement"
+        static let displayChoice = "displayChoice"
         static let countdownSeconds = "countdownSeconds"
         static let targetMinutes = "targetMinutes"
         static let autoSpeed = "autoSpeed"
@@ -301,6 +329,7 @@ final class PrompterSettings: ObservableObject {
     @Published var showProgress: Bool { didSet { defaults.set(showProgress, forKey: Key.showProgress) } }
 
     // MARK: Position
+    @Published var displayChoice: DisplayChoice { didSet { defaults.set(displayChoice.storageValue, forKey: Key.displayChoice) } }
     @Published var placement: PrompterPlacement { didSet { defaults.set(placement.rawValue, forKey: Key.placement) } }
     /// Bottom-left corner of the prompter in Anywhere mode (screen coordinates). nil = not moved yet.
     @Published var floatingOrigin: CGPoint? {
@@ -413,6 +442,7 @@ final class PrompterSettings: ObservableObject {
         } else {
             shortcuts = [:]
         }
+        displayChoice = DisplayChoice(storageValue: d.string(forKey: Key.displayChoice))
         placement = PrompterPlacement(rawValue: d.string(forKey: Key.placement) ?? "") ?? .notch
         if let x = d.object(forKey: Key.floatingX) as? Double, let y = d.object(forKey: Key.floatingY) as? Double {
             floatingOrigin = CGPoint(x: x, y: y)
