@@ -1,5 +1,7 @@
 # PeekPrompt
 
+[![Build](https://github.com/Amna29Mubashar/PeekPrompt/actions/workflows/build.yml/badge.svg)](https://github.com/Amna29Mubashar/PeekPrompt/actions/workflows/build.yml)
+
 A teleprompter that lives in your MacBook's notch, right under the camera, so you look straight at your audience while you read.
 
 ## Features
